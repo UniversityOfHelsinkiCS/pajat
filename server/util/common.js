@@ -8,5 +8,5 @@ module.exports = {
   ...common,
   PORT,
   API_KEY,
-  DOCUMENT_ID,
+  SHEET_ID: DOCUMENT_ID,
 }

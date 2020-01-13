@@ -80,7 +80,7 @@ const iframe = async (req, res) => {
       if (idx < 2) return ''
       return (
         `<tr>
-          ${row.map(val => `<td>${val}</td>`).join('')}
+          ${row.map(val => (val === 'OHJAUSTA' ? `<td style="background-color: lightgray;">${''}</td>` : `<td>${val}</td>`)).join('')}
         </tr>`
       )
     }).join('')}
