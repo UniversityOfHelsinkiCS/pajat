@@ -1,0 +1,16 @@
+version: '3.5'
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: config/dev.Dockerfile
+    image: pajat_dev
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - 8000:8000
+    container_name: pajat_dev
+
+volumes:
+  pg_data:
