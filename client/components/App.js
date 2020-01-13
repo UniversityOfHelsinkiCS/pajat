@@ -1,6 +1,6 @@
 import React from 'react'
 import NavBar from 'Components/NavBar'
-import PajaList from 'Components/Pajalist'
+import PajaList from 'Components/PajaList'
 
 export default () => (
   <div>
