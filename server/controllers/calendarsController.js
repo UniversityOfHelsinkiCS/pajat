@@ -1,6 +1,20 @@
 const { ApplicationError } = require('@util/customErrors')
+const NodeCache = require('node-cache')
 const { API_KEY, SHEET_ID } = require('@util/common')
 const axios = require('axios')
+
+const cache = new NodeCache({ stdTTL: 60 * 60 }) // 1h
+
+const fetchValues = async (sheetsUrl) => {
+  const cacheHit = cache.get(sheetsUrl)
+  if (cacheHit) return cacheHit
+
+  const response = await axios.get(encodeURI(sheetsUrl))
+  const { values } = response.data
+  cache.set(sheetsUrl, values)
+  return values
+}
+
 
 // Table is from B to G, starts at row 3 and is 11 rows high.
 const getWeeks = async (course, currentWeekStartsAt, nextWeekStartsAt, location = 3, currentWeek, nextWeek) => {
@@ -9,9 +23,8 @@ const getWeeks = async (course, currentWeekStartsAt, nextWeekStartsAt, location 
 
   const rows = `B${location}:G${location + 11}`
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!${rows}?key=${API_KEY}`
-  const response = await axios.get(encodeURI(url))
 
-  const { values } = response.data
+  const values = await fetchValues(url)
   const currentWeekRows = (values.find(d => d.find(v => v.includes(currentWeekStartsAt))) ? values : undefined) || currentWeek
   const nextWeekRows = (values.find(d => d.find(v => v.includes(nextWeekStartsAt))) ? values : undefined) || nextWeek
 
@@ -42,10 +55,12 @@ const mankeloi = (values) => {
 }
 
 const getCurrentAndNext = async (course = 'kaikki') => {
-  const currentWeekResponse = await axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F1?key=${API_KEY}`)
-  const nextWeekResponse = await axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F2?key=${API_KEY}`)
-  const currentWeekStartsAt = currentWeekResponse.data.values[0][0]
-  const nextWeekStartsAt = nextWeekResponse.data.values[0][0]
+  const currentWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F1?key=${API_KEY}`
+  const nextWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F2?key=${API_KEY}`
+  const currentWeekValues = await fetchValues(currentWeekUrl)
+  const nextWeekValues = await fetchValues(nextWeekUrl)
+  const currentWeekStartsAt = currentWeekValues[0][0]
+  const nextWeekStartsAt = nextWeekValues[0][0]
 
   const [currentWeekRows, nextWeekRows] = await getWeeks(course, currentWeekStartsAt, nextWeekStartsAt)
 
@@ -61,16 +76,15 @@ const getAll = async (req, res) => {
 
 const getHeader = async (course) => {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!B1:B2?key=${API_KEY}`
-  const response = await axios.get(encodeURI(url))
-  const { values } = response.data
+  const values = await fetchValues(url)
   const longName = values[0][0]
   const shortName = values[1][0]
   return `<h2>${longName} (${shortName})</h2>`
 }
 
 const getHelp = async () => {
-  const response = await axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!A1:B48?key=${API_KEY}`)
-  const courseNames = response.data.values
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!A1:B48?key=${API_KEY}`
+  const courseNames = await fetchValues(url)
   const hashMap = courseNames.reduce((acc, keyValPair) => {
     const [fullName, short] = keyValPair
     acc[fullName] = short
