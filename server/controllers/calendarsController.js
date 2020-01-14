@@ -6,6 +6,7 @@ const axios = require('axios')
 const getWeeks = async (course, currentWeekStartsAt, nextWeekStartsAt, location = 3, currentWeek, nextWeek) => {
   // TODO: Cache
   if (currentWeek && nextWeek) return [currentWeek, nextWeek]
+  console.log('kurssi', course)
 
   const rows = `B${location}:G${location + 11}`
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!${rows}?key=${API_KEY}`
@@ -102,7 +103,7 @@ const weekToTable = week => (
 `
 )
 
-const getSingleCourseTable = async (course, week, includeName) => {
+const getSingleCourseTable = async (course, week, includeName = true) => {
   const [current, next] = await getCurrentAndNext(course)
   const chosenWeek = week === 'next' ? next : current
 
@@ -112,7 +113,7 @@ const getSingleCourseTable = async (course, week, includeName) => {
   `
 }
 
-const getKaikkiTable = async (week) => {
+const getKaikkiTable = async (week, includeHelp = true) => {
   const helpMap = await getHelp()
   const course = 'kaikki'
   const [current, next] = await getCurrentAndNext(course, week)
@@ -123,21 +124,26 @@ const getKaikkiTable = async (week) => {
     const converted = longNames.map(name => helpMap[name] || name)
     return converted.join(', ')
   }))
-  return `
-  ${weekToTable(weekWithConvertedNames)}
+  const helpList = `
   <div>
     <ul>
       ${Object.keys(helpMap).map(key => `<li>${helpMap[key]} = ${key}</li>`).join('')}
     <ul>
   </div>
   `
+
+  return `
+  ${weekToTable(weekWithConvertedNames)}
+  ${includeHelp ? helpList : ''}
+  `
 }
 
 const iframe = async (req, res) => {
   const { course, week } = req.params
+  const { name, help } = req.query
   const table = course === 'kaikki'
-    ? await getKaikkiTable(week)
-    : await getSingleCourseTable(course, week, req.query.name !== 'false')
+    ? await getKaikkiTable(week, help !== 'false')
+    : await getSingleCourseTable(course, week, name !== 'false')
 
   const html = `
   <html>
