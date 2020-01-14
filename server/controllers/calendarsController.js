@@ -6,18 +6,17 @@ const axios = require('axios')
 const getWeeks = async (course, currentWeekStartsAt, nextWeekStartsAt, location = 3, currentWeek, nextWeek) => {
   // TODO: Cache
   if (currentWeek && nextWeek) return [currentWeek, nextWeek]
-  console.log('kurssi', course)
 
   const rows = `B${location}:G${location + 11}`
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!${rows}?key=${API_KEY}`
-  const response = await axios.get(url)
+  const response = await axios.get(encodeURI(url))
 
   const { values } = response.data
   const currentWeekRows = (values.find(d => d.find(v => v.includes(currentWeekStartsAt))) ? values : undefined) || currentWeek
   const nextWeekRows = (values.find(d => d.find(v => v.includes(nextWeekStartsAt))) ? values : undefined) || nextWeek
 
   // Sanity check
-  if (!values[1][1]) return console.log('Jotain viturallaan') && []
+  if (!values[1][1]) return console.error('Jotain viturallaan') && []
 
   return getWeeks(course, currentWeekStartsAt, nextWeekStartsAt, location + 12, currentWeekRows, nextWeekRows)
 }
@@ -62,7 +61,7 @@ const getAll = async (req, res) => {
 
 const getHeader = async (course) => {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!B1:B2?key=${API_KEY}`
-  const response = await axios.get(url)
+  const response = await axios.get(encodeURI(url))
   const { values } = response.data
   const longName = values[0][0]
   const shortName = values[1][0]
@@ -92,6 +91,8 @@ const weekToTable = week => (
   <tbody>
     ${week.map((row, idx) => {
     if (idx < 2) return ''
+    while (row.length < 6) row.push('')
+
     return (
       `<tr>
         ${row.map(val => (val === 'OHJAUSTA' ? `<td style="background-color: lightgray;">${''}</td>` : `<td>${val}</td>`)).join('')}
@@ -133,6 +134,14 @@ const getKaikkiTable = async (week, includeHelp = true) => {
   `
 
   return `
+  <style>
+  tbody tr:nth-of-type(2n-1) td {
+    background: whitesmoke;
+  }
+  table {
+    border-collapse: collapse;
+  }
+  </style>
   ${weekToTable(weekWithConvertedNames)}
   ${includeHelp ? helpList : ''}
   `
@@ -148,6 +157,8 @@ const iframe = async (req, res) => {
   const html = `
   <html>
   <style>
+  html { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; }
+  thead td { font-weight: bold }
   td { padding: 3px; }
   table {
     table-layout: fixed;
