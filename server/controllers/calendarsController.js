@@ -199,14 +199,37 @@ const screen = async (req, res) => {
   const date = new Date()
   const day = date.getDay()
 
+  const colors = [
+    'transparent',
+    'rgba(41, 128, 185,1.0)',
+    'rgba(243, 156, 18,1.0)',
+    'rgba(39, 174, 96,1.0)',
+    'rgba(22, 160, 133,1.0)',
+    'rgba(192, 57, 43,1.0)',
+    'transparent',
+  ]
+
+  const color = colors[day]
+
   const html = `
   <html>
   <style>
   html { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; }
   tr td:nth-child(1) { opacity: 1 !important; font-weight: bold; width: 5em; }
   tr td:not(:nth-child(${1 + day})) { opacity: 0.5; }
+  thead tr:first-of-type td:nth-child(${1 + day}) {
+    border-top: 5px solid ${color};
+  }
+  tbody tr:last-of-type td:nth-child(${1 + day}) {
+    border-bottom: 5px solid ${color};
+  }
+  tr td:nth-child(${1 + day}) {
+    font-weight: bold;
+  }
   thead td { font-weight: bold }
-  td { padding: 3px; }
+  td {
+    padding: 5px;
+  }
   table {
     table-layout: fixed;
     width: 100%;
