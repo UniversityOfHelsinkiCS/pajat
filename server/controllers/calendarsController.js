@@ -193,13 +193,31 @@ const iframe = async (req, res) => {
   res.send(html)
 }
 
-const screen = (req, res) => {
-  req.params = {
-    course: 'kaikki',
-    week: 'current',
-  }
+const screen = async (req, res) => {
+  const table = await getKaikkiTable('current', true)
 
-  return iframe(req, res)
+  const html = `
+  <html>
+  <style>
+  html { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; }
+  tr td:nth-child(1) { font-weight: bold; width: 5em; }
+  thead td { font-weight: bold }
+  td { padding: 3px; }
+  table {
+    table-layout: fixed;
+    width: 100%;
+    font-size: 1.5vw;
+  }
+  body { padding: 2em }
+  div { padding-top: 2em }
+  </style>
+  <body>
+  ${table}
+  </body>
+  </html
+  `
+
+  res.send(html)
 }
 
 module.exports = {
