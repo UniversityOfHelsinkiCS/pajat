@@ -175,13 +175,13 @@ const iframe = async (req, res) => {
   <html>
   <style>
   html { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; }
-  tr td:nth-child(1) { font-weight: bold; width: 5em; }
+  tr td:nth-child(1) { width: 5em; }
   thead td { font-weight: bold }
   td { padding: 3px; }
   table {
     table-layout: fixed;
     width: 100%;
-    font-size: calc(1em + 0.5vw);
+    font-size: calc(1em + 0.3vw);
   }
   </style>
   <body>
@@ -215,7 +215,7 @@ const screen = async (req, res) => {
   <html>
   <style>
   html { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; }
-  tr td:nth-child(1) { opacity: 1 !important; font-weight: bold; width: 5em; }
+  tr td:nth-child(1) { opacity: 1 !important; width: 5em; }
   tr td:not(:nth-child(${1 + day})) { opacity: 0.5; }
   thead tr:first-of-type td:nth-child(${1 + day}) {
     border-top: 5px solid ${color};
