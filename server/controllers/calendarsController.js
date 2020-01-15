@@ -196,11 +196,15 @@ const iframe = async (req, res) => {
 const screen = async (req, res) => {
   const table = await getKaikkiTable('current', true)
 
+  const date = new Date()
+  const day = date.getDay()
+
   const html = `
   <html>
   <style>
   html { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; }
-  tr td:nth-child(1) { font-weight: bold; width: 5em; }
+  tr td:nth-child(1) { opacity: 1 !important; font-weight: bold; width: 5em; }
+  tr td:not(:nth-child(${1 + day})) { opacity: 0.5; }
   thead td { font-weight: bold }
   td { padding: 3px; }
   table {
