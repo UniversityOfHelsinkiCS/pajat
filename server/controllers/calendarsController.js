@@ -193,7 +193,17 @@ const iframe = async (req, res) => {
   res.send(html)
 }
 
+const screen = (req, res) => {
+  req.params = {
+    course: 'kaikki',
+    week: 'current',
+  }
+
+  return iframe(req, res)
+}
+
 module.exports = {
   getAll,
   iframe,
+  screen,
 }
