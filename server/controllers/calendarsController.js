@@ -128,7 +128,7 @@ const getSingleCourseTable = async (course, week, includeName = true) => {
   `
 }
 
-const getKaikkiTable = async (week, includeHelp = true) => {
+const getKaikkiTable = async (week, includeHelp = true, courses = []) => {
   const helpMap = await getHelp()
   const course = 'kaikki'
   const [current, next] = await getCurrentAndNext(course, week)
@@ -136,7 +136,10 @@ const getKaikkiTable = async (week, includeHelp = true) => {
 
   const weekWithConvertedNames = chosenWeek.map(row => row.map((field) => {
     const longNames = field.split(', ')
-    const converted = longNames.map(name => helpMap[name] || name)
+    const converted = longNames.map(name => helpMap[name] || name).filter((shortName) => {
+      if (!courses.length) return true
+      return courses.includes(shortName.toLowerCase())
+    })
     return converted.join(', ')
   }))
   const helpList = `
@@ -166,9 +169,9 @@ const getKaikkiTable = async (week, includeHelp = true) => {
 
 const iframe = async (req, res) => {
   const { course, week } = req.params
-  const { name, help } = req.query
+  const { name, help, courses } = req.query
   const table = course === 'kaikki'
-    ? await getKaikkiTable(week, help !== 'false')
+    ? await getKaikkiTable(week, help !== 'false', courses)
     : await getSingleCourseTable(course, week, name !== 'false')
 
   const html = `
