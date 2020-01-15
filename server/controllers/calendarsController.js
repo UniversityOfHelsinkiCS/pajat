@@ -136,10 +136,12 @@ const getKaikkiTable = async (week, includeHelp = true, courses = []) => {
 
   const weekWithConvertedNames = chosenWeek.map(row => row.map((field) => {
     const longNames = field.split(', ')
-    const converted = longNames.map(name => helpMap[name] || name).filter((shortName) => {
+    const converted = longNames.filter((name) => {
       if (!courses.length) return true
+      if (!helpMap[name]) return true
+      const shortName = helpMap[name]
       return courses.includes(shortName.toLowerCase())
-    })
+    }).map(name => helpMap[name] || name)
     return converted.join(', ')
   }))
   const helpList = `
