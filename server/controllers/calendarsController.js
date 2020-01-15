@@ -155,6 +155,9 @@ const getKaikkiTable = async (week, includeHelp = true) => {
   table {
     border-collapse: collapse;
   }
+  ul {
+    columns: 2;
+  }
   </style>
   ${weekToTable(weekWithConvertedNames)}
   ${includeHelp ? helpList : ''}
@@ -172,11 +175,13 @@ const iframe = async (req, res) => {
   <html>
   <style>
   html { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; }
+  tr td:nth-child(1) { font-weight: bold; width: 5em; }
   thead td { font-weight: bold }
   td { padding: 3px; }
   table {
     table-layout: fixed;
     width: 100%;
+    font-size: 1.5vw;
   }
   </style>
   <body>
