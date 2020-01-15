@@ -99,7 +99,7 @@ const weekToTable = week => (
   <table>
   <thead>
     <tr>
-      ${week[0].map((day, idx) => (`<td>${(idx !== 0) ? `${week[1][idx]} ${day}` : 'Time'}</td>`)).join('')}
+      ${week[0].map((day, idx) => (`<td>${(idx !== 0) ? `${week[1][idx]} ${day}` : ''}</td>`)).join('')}
     </tr>
   </thead>
   <tbody>
@@ -147,7 +147,7 @@ const getKaikkiTable = async (week, includeHelp = true, courses = []) => {
   const helpList = `
   <div>
     <ul>
-      ${Object.keys(helpMap).map(key => `<li>${helpMap[key]} = ${key}</li>`).join('')}
+      ${Object.keys(helpMap).sort((a, b) => a.localeCompare(b)).map(key => `<li>${helpMap[key]} = ${key}</li>`).join('')}
     <ul>
   </div>
   `
@@ -161,7 +161,7 @@ const getKaikkiTable = async (week, includeHelp = true, courses = []) => {
     border-collapse: collapse;
   }
   ul {
-    columns: 2;
+    columns: 4;
   }
   </style>
   ${weekToTable(weekWithConvertedNames)}
@@ -199,7 +199,7 @@ const iframe = async (req, res) => {
 }
 
 const screen = async (req, res) => {
-  const table = await getKaikkiTable('current', true)
+  const table = (await getKaikkiTable('current', true)).replace(/2020/g, '')
 
   const date = new Date()
   const day = date.getDay()
@@ -219,8 +219,8 @@ const screen = async (req, res) => {
   const html = `
   <html>
   <style>
-  html { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; }
-  tr td:nth-child(1) { opacity: 1 !important; width: 5em; }
+  html { font-family: Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; }
+  tr td:nth-child(1) { opacity: 1 !important; width: 5em; font-weight: bold; }
   tr td:not(:nth-child(${1 + day})) { opacity: 0.5; }
   thead tr:first-of-type td:nth-child(${1 + day}) {
     border-top: 5px solid ${color};
@@ -244,6 +244,7 @@ const screen = async (req, res) => {
   div { padding-top: 2em }
   </style>
   <body>
+  <h2>BK107 Paja / Workshop</h2>
   ${table}
   </body>
   </html
