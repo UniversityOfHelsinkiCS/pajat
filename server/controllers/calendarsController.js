@@ -181,7 +181,7 @@ const iframe = async (req, res) => {
   table {
     table-layout: fixed;
     width: 100%;
-    font-size: 1.5vw;
+    font-size: calc(1em + 0.5vw);
   }
   </style>
   <body>
