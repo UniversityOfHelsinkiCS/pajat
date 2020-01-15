@@ -3,7 +3,7 @@ const NodeCache = require('node-cache')
 const { API_KEY, SHEET_ID } = require('@util/common')
 const axios = require('axios')
 
-const cache = new NodeCache({ stdTTL: 60 * 60 }) // 1h
+const cache = new NodeCache({ stdTTL: 60 * 3 }) // 3 min
 
 const fetchValues = async (sheetsUrl) => {
   const cacheHit = cache.get(sheetsUrl)
