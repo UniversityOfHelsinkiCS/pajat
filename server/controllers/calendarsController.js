@@ -3,15 +3,28 @@ const NodeCache = require('node-cache')
 const { API_KEY, SHEET_ID } = require('@util/common')
 const axios = require('axios')
 
-const cache = new NodeCache({ stdTTL: 60 * 3 }) // 3 min
+const cacheTtl = 60 * 5 // 5 min
+const cache = new NodeCache({ stdTTL: cacheTtl, deleteOnExpire: false })
+
+const refreshCache = async (sheetsUrl) => {
+  const response = await axios.get(encodeURI(sheetsUrl))
+  const { values } = response.data
+  if (!values) return false
+
+  cache.set(sheetsUrl, values)
+  return values
+}
 
 const fetchValues = async (sheetsUrl) => {
   const cacheHit = cache.get(sheetsUrl)
-  if (cacheHit) return cacheHit
+  const ttl = cache.getTtl(sheetsUrl)
+  const expired = (ttl - Date.now()) < 0
+  if (cacheHit && !expired) return cacheHit
 
-  const response = await axios.get(encodeURI(sheetsUrl))
-  const { values } = response.data
-  cache.set(sheetsUrl, values)
+  const values = await refreshCache(sheetsUrl)
+
+  if (!values && cacheHit) return cacheHit // If can't update, return old if possible
+
   return values
 }
 
