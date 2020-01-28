@@ -7,7 +7,7 @@ const WeekTable = ({ title, week }) => {
     <div>
       <h2>{title}</h2>
       <iframe
-        frameborder="0"
+        frameBorder="0"
         src={`https://study.cs.helsinki.fi/pajat/api/kaikki/${week}${help}`}
         style={{ width: '100%', height: '50em' }}
       />

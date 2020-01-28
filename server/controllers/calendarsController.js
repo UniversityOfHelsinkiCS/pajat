@@ -1,33 +1,17 @@
 const { ApplicationError } = require('@util/customErrors')
-const NodeCache = require('node-cache')
-const { API_KEY, SHEET_ID } = require('@util/common')
-const axios = require('axios')
+const { API_KEY, SHEET_ID, fetchValues } = require('@util/common')
 
-const cacheTtl = 60 * 5 // 5 min
-const cache = new NodeCache({ stdTTL: cacheTtl, deleteOnExpire: false })
+const getHelp = async () => {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!A1:B48?key=${API_KEY}`
+  const courseNames = await fetchValues(url)
+  const hashMap = courseNames.reduce((acc, keyValPair) => {
+    const [fullName, short] = keyValPair
+    acc[fullName] = short
+    return acc
+  }, {})
 
-const refreshCache = async (sheetsUrl) => {
-  const response = await axios.get(encodeURI(sheetsUrl))
-  const { values } = response.data
-  if (!values) return false
-
-  cache.set(sheetsUrl, values)
-  return values
+  return hashMap
 }
-
-const fetchValues = async (sheetsUrl) => {
-  const cacheHit = cache.get(sheetsUrl)
-  const ttl = cache.getTtl(sheetsUrl)
-  const expired = (ttl - Date.now()) < 0
-  if (cacheHit && !expired) return cacheHit
-
-  const values = await refreshCache(sheetsUrl)
-
-  if (!values && cacheHit) return cacheHit // If can't update, return old if possible
-
-  return values
-}
-
 
 // Table is from B to G, starts at row 3 and is 11 rows high.
 const getWeeks = async (course, currentWeekStartsAt, nextWeekStartsAt, location = 3, currentWeek, nextWeek) => {
@@ -47,16 +31,25 @@ const getWeeks = async (course, currentWeekStartsAt, nextWeekStartsAt, location 
   return getWeeks(course, currentWeekStartsAt, nextWeekStartsAt, location + 12, currentWeekRows, nextWeekRows)
 }
 
-const mankeloi = (values) => {
+const mankeloi = async (values) => {
+  const helpMap = await getHelp()
   const days = values[1].map((v, idx) => {
     const value = v.trim()
     if (!['Ma', 'Ti', 'Ke', 'To', 'Pe'].includes(value)) return undefined
 
-    const parseTimeRow = row => ({ [row[0]]: (row[idx] || '').split(', ') })
+    const parseTimeRow = (row) => {
+      const hourCourses = row[idx] ? row[idx].split(', ') : []
+      const withShortNames = hourCourses.map(c => ({
+        name: c,
+        short: helpMap[c],
+      }))
+      return {
+        [row[0]]: withShortNames,
+      }
+    }
 
     const timeValues = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
       .reduce((acc, rowIdx) => ({ ...acc, ...parseTimeRow(values[rowIdx]) }), {})
-
     return {
       day: value,
       date: values[0][idx],
@@ -82,8 +75,8 @@ const getCurrentAndNext = async (course = 'kaikki') => {
 
 const getAll = async (req, res) => {
   const [current, next] = await getCurrentAndNext()
-  const mankeledCurrent = mankeloi(current)
-  const mankeledNext = mankeloi(next)
+  const mankeledCurrent = await mankeloi(current)
+  const mankeledNext = await mankeloi(next)
   res.send([mankeledCurrent, mankeledNext])
 }
 
@@ -93,18 +86,6 @@ const getHeader = async (course) => {
   const longName = values[0][0]
   const shortName = values[1][0]
   return `<h2>${longName} (${shortName})</h2>`
-}
-
-const getHelp = async () => {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!A1:B48?key=${API_KEY}`
-  const courseNames = await fetchValues(url)
-  const hashMap = courseNames.reduce((acc, keyValPair) => {
-    const [fullName, short] = keyValPair
-    acc[fullName] = short
-    return acc
-  }, {})
-
-  return hashMap
 }
 
 const weekToTable = week => (
