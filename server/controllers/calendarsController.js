@@ -22,8 +22,8 @@ const getWeeks = async (course, currentWeekStartsAt, nextWeekStartsAt, location 
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!${rows}?key=${API_KEY}`
 
   const values = await fetchValues(url)
-  const currentWeekRows = (values.find(d => d.find(v => v.includes(currentWeekStartsAt))) ? values : undefined) || currentWeek
-  const nextWeekRows = (values.find(d => d.find(v => v.includes(nextWeekStartsAt))) ? values : undefined) || nextWeek
+  const currentWeekRows = (values.find(row => row.find(v => v === currentWeekStartsAt)) ? values : undefined) || currentWeek
+  const nextWeekRows = (values.find(row => row.find(v => v === nextWeekStartsAt)) ? values : undefined) || nextWeek
 
   // Sanity check
   if (!values[1][1]) return console.error('Jotain viturallaan') && []
