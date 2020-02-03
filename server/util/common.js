@@ -1,4 +1,6 @@
 const common = require('@root/config/common')
+const logger = require('@util/logger')
+
 const axios = require('axios')
 const NodeCache = require('node-cache')
 
@@ -23,11 +25,14 @@ const fetchValues = async (sheetsUrl) => {
   const ttl = cache.getTtl(sheetsUrl)
   const expired = (ttl - Date.now()) < 0
   if (cacheHit && !expired) return cacheHit
-
   const values = await refreshCache(sheetsUrl)
 
   if (!values && cacheHit) return cacheHit // If can't update, return old if possible
 
+  if (!values) {
+    logger.info('Not in cache and could not get data')
+    logger.info(sheetsUrl)
+  }
   return values
 }
 
