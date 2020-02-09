@@ -13,12 +13,16 @@ const cacheTtl = 60 * 5 // 5 min
 const cache = new NodeCache({ stdTTL: cacheTtl, deleteOnExpire: false })
 
 const refreshCache = async (sheetsUrl) => {
-  const response = await axios.get(encodeURI(sheetsUrl))
-  const { values } = response.data
-  if (!values) return false
+  try {
+    const response = await axios.get(encodeURI(sheetsUrl))
+    const { values } = response.data
+    if (!values) return false
 
-  cache.set(sheetsUrl, values)
-  return values
+    cache.set(sheetsUrl, values)
+    return values
+  } catch (e) {
+    return false
+  }
 }
 
 const fetchValues = async (sheetsUrl) => {

@@ -210,7 +210,7 @@ const iframe = async (req, res) => {
   }
   </style>
   <body>
-  ${table}
+  ${table.replace(/.2020/g, '.')}
   </body>
   </html
   `
