@@ -88,7 +88,7 @@ const getHeader = async (course) => {
   return `<h2>${longName} (${shortName})</h2>`
 }
 
-const weekToTable = week => (
+const weekToSingleCourseTable = (week, pajaTimeColor = 'lightgray', pajaTimeText = '') => (
   `
   <table>
   <thead>
@@ -103,7 +103,7 @@ const weekToTable = week => (
 
     return (
       `<tr>
-        ${row.map(val => (val === 'OHJAUSTA' ? `<td style="background-color: lightgray;">${''}</td>` : `<td>${val}</td>`)).join('')}
+        ${row.map(val => (val === 'OHJAUSTA' ? `<td style="background-color: ${pajaTimeColor};">${pajaTimeText}</td>` : `<td>${val}</td>`)).join('')}
       </tr>`
     )
   }).join('')}
@@ -112,13 +112,37 @@ const weekToTable = week => (
 `
 )
 
-const getSingleCourseTable = async (course, week, includeName = true) => {
+const weekToKaikkiTable = week => (
+  `
+  <table>
+  <thead>
+    <tr>
+      ${week[0].map((day, idx) => (`<td>${(idx !== 0) ? `${week[1][idx]} ${day}` : ''}</td>`)).join('')}
+    </tr>
+  </thead>
+  <tbody>
+    ${week.map((row, idx) => {
+    if (idx < 2) return ''
+    while (row.length < 6) row.push('')
+
+    return (
+      `<tr>
+        ${row.map(val => `<td>${val}</td>`).join('')}
+      </tr>`
+    )
+  }).join('')}
+  </tbody>
+  </table>
+`
+)
+
+const getSingleCourseTable = async (course, week, includeName = true, pajaTimeColor, pajaTimeText) => {
   const [current, next] = await getCurrentAndNext(course)
   const chosenWeek = week === 'next' ? next : current
 
   return `
     ${includeName ? await getHeader(course) : ''}
-    ${weekToTable(chosenWeek)}
+    ${weekToSingleCourseTable(chosenWeek, pajaTimeColor, pajaTimeText)}
   `
 }
 
@@ -158,17 +182,19 @@ const getKaikkiTable = async (week, includeHelp = true, courses = []) => {
     columns: 4;
   }
   </style>
-  ${weekToTable(weekWithConvertedNames)}
+  ${weekToKaikkiTable(weekWithConvertedNames)}
   ${includeHelp ? helpList : ''}
   `
 }
 
 const iframe = async (req, res) => {
   const { course, week } = req.params
-  const { name, help, courses } = req.query
+  const {
+    name, help, courses, color: pajaTimeColor, text: pajaTimeText,
+  } = req.query
   const table = course === 'kaikki'
     ? await getKaikkiTable(week, help !== 'false', courses)
-    : await getSingleCourseTable(course, week, name !== 'false')
+    : await getSingleCourseTable(course, week, name !== 'false', pajaTimeColor, pajaTimeText)
 
   const html = `
   <html>

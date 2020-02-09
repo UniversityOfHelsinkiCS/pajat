@@ -1,3 +1,4 @@
+require('dotenv').config()
 const common = require('@root/config/common')
 const logger = require('@util/logger')
 
