@@ -1,5 +1,22 @@
 const { API_KEY, SHEET_ID, fetchValues } = require('@util/common')
 
+const translations = {
+  en: {
+    ma: 'Mo',
+    ti: 'Tu',
+    ke: 'We',
+    to: 'Th',
+    pe: 'Fr',
+  },
+  fi: {
+    ma: 'Ma',
+    ti: 'Ti',
+    ke: 'Ke',
+    to: 'To',
+    pe: 'Pe',
+  }
+}
+
 const getHeader = async (course) => {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!B1:B2?key=${API_KEY}`
   const values = await fetchValues(url)
@@ -8,95 +25,71 @@ const getHeader = async (course) => {
   return `<h2>${longName} (${shortName})</h2>`
 }
 
-
-// Table is from B to G, starts at row 3 and is 11 rows high.
-const getWeeks = async (
-  course,
-  currentWeekStartsAt,
-  nextWeekStartsAt,
-  location = 3,
-  currentWeek,
-  nextWeek,
-) => {
-  // TODO: Cache
-  if (currentWeek && nextWeek) return [currentWeek, nextWeek]
-
+const findWeekThatStartsAt = async (course, weekStartDate, location = 3) => {
   const rows = `B${location}:G${location + 11}`
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!${rows}?key=${API_KEY}`
-
   const values = await fetchValues(url)
-  const currentWeekRows = (values.find(row => row.find(v => v === currentWeekStartsAt))
-    ? values
-    : undefined) || currentWeek
-  const nextWeekRows = (values.find(row => row.find(v => v === nextWeekStartsAt))
-    ? values
-    : undefined) || nextWeek
-
+  if (values.find(row => row.find(v => v === weekStartDate))) return values
   // Sanity check
   if (!values[1][1]) throw new Error('Jotain viturallaan') && []
-
-  return getWeeks(
-    course,
-    currentWeekStartsAt,
-    nextWeekStartsAt,
-    location + 12,
-    currentWeekRows,
-    nextWeekRows,
-  )
+  return findWeekThatStartsAt(course, weekStartDate, location + 12)
 }
 
-const getCurrentAndNext = async (course = 'kaikki') => {
+const getWeekForCourse = async (course, week) => {
   const currentWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F1?key=${API_KEY}`
   const nextWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F2?key=${API_KEY}`
-  const currentWeekValues = await fetchValues(currentWeekUrl)
-  const nextWeekValues = await fetchValues(nextWeekUrl)
-  const currentWeekStartsAt = currentWeekValues[0][0]
-  const nextWeekStartsAt = nextWeekValues[0][0]
+  const url = week === 'next' ? nextWeekUrl : currentWeekUrl
+  const weekValues = await fetchValues(url)
+  const weekStartsAt = weekValues[0][0]
 
-  const [currentWeekRows, nextWeekRows] = await getWeeks(
-    course,
-    currentWeekStartsAt,
-    nextWeekStartsAt,
-  )
-
-  return [currentWeekRows, nextWeekRows]
+  const weekRows = await findWeekThatStartsAt(course, weekStartsAt)
+  return weekRows
 }
 
 const weekToSingleCourseTable = (
   week,
   pajaTimeColor = 'white',
   pajaTimeText = '✖',
-) => `
+  lang,
+) => {
+  const getDayTranslation = (day) => {
+    const key = day.toLowerCase()
+    const chosenLang = lang || 'en'
+    return (translations && translations[chosenLang] && translations[chosenLang][key]) || day
+  }
+
+  const weekDays = week[0].map(
+    (day, idx) => `<td><div class="cell-content-container">
+    ${idx !== 0 ? `${getDayTranslation(week[1][idx])} ${day}` : ''}
+    </div></td>`,
+  ).join('')
+
+  return `
   <table>
   <thead>
     <tr>
-      ${week[0]
-    .map(
-      (day, idx) => `<td><div class="cell-content-container">${
-        idx !== 0 ? `${week[1][idx]} ${day}` : ''
-      }</div></td>`,
-    )
-    .join('')}
+    ${weekDays}
     </tr>
   </thead>
   <tbody>
     ${week
-    .map((row, idx) => {
-      if (idx < 2) return ''
-      while (row.length < 6) row.push('')
+      .map((row, idx) => {
+        if (idx < 2) return ''
+        while (row.length < 6) row.push('')
 
-      return `<tr>
+        return `<tr>
         ${row
-    .map(val => (val === 'OHJAUSTA'
-      ? `<td class="day-cell" style="background-color: ${pajaTimeColor};"><div class="cell-content-container">${pajaTimeText}</div></td>`
-      : `<td><div class="cell-content-container">${val}</div></td>`))
-    .join('')}
+            .map(val => (val === 'OHJAUSTA'
+              ? `<td class="day-cell" style="background-color: ${pajaTimeColor};"><div class="cell-content-container">${pajaTimeText}</div></td>`
+              : `<td><div class="cell-content-container">${val}</div></td>`))
+            .join('')}
       </tr>`
-    })
-    .join('')}
+      })
+      .join('')}
   </tbody>
   </table>
 `
+}
 
 const getSingleCourseTable = async (
   course,
@@ -104,13 +97,15 @@ const getSingleCourseTable = async (
   includeName = true,
   pajaTimeColor,
   pajaTimeText,
+  lang,
 ) => {
-  const [current, next] = await getCurrentAndNext(course)
-  const chosenWeek = week === 'next' ? next : current
+  const chosenWeek = await getWeekForCourse(course, week)
+
+  if (!chosenWeek) return 'No course or week here'
 
   return `
     ${includeName ? await getHeader(course) : ''}
-    ${weekToSingleCourseTable(chosenWeek, pajaTimeColor, pajaTimeText)}
+    ${weekToSingleCourseTable(chosenWeek, pajaTimeColor, pajaTimeText, lang)}
   `
 }
 
@@ -120,6 +115,7 @@ const iframe = async (req, res) => {
     name,
     color: pajaTimeColor,
     text: pajaTimeText,
+    lang,
   } = req.query
   const table = await getSingleCourseTable(
     course,
@@ -127,6 +123,7 @@ const iframe = async (req, res) => {
     name !== 'false',
     pajaTimeColor,
     pajaTimeText,
+    lang,
   )
 
   const html = `
