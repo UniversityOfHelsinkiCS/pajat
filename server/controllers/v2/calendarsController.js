@@ -2,11 +2,11 @@ const { API_KEY, SHEET_ID, fetchValues } = require('@util/common')
 
 const translations = {
   en: {
-    ma: 'Mo',
-    ti: 'Tu',
-    ke: 'We',
-    to: 'Th',
-    pe: 'Fr',
+    ma: 'Mon',
+    ti: 'Tue',
+    ke: 'Wed',
+    to: 'Thu',
+    pe: 'Fri',
   },
   fi: {
     ma: 'Ma',
@@ -14,7 +14,7 @@ const translations = {
     ke: 'Ke',
     to: 'To',
     pe: 'Pe',
-  }
+  },
 }
 
 const getHeader = async (course) => {
@@ -53,7 +53,7 @@ const weekToSingleCourseTable = (
   lang,
 ) => {
   const getDayTranslation = (day) => {
-    const key = day.toLowerCase()
+    const key = day.toLowerCase().trim()
     const chosenLang = lang || 'en'
     return (translations && translations[chosenLang] && translations[chosenLang][key]) || day
   }
@@ -72,20 +72,20 @@ const weekToSingleCourseTable = (
     </tr>
   </thead>
   <tbody>
-    ${week
-      .map((row, idx) => {
-        if (idx < 2) return ''
-        while (row.length < 6) row.push('')
+    ${week.map((row, idx) => {
+    if (idx < 2) return ''
+    while (row.length < 6) row.push('')
 
-        return `<tr>
+    return (
+      `<tr>
         ${row
-            .map(val => (val === 'OHJAUSTA'
-              ? `<td class="day-cell" style="background-color: ${pajaTimeColor};"><div class="cell-content-container">${pajaTimeText}</div></td>`
-              : `<td><div class="cell-content-container">${val}</div></td>`))
-            .join('')}
+        .map(val => (val === 'OHJAUSTA'
+          ? `<td class="day-cell" style="background-color: ${pajaTimeColor};"><div class="cell-content-container">${pajaTimeText}</div></td>`
+          : `<td><div class="cell-content-container">${val}</div></td>`))
+        .join('')}
       </tr>`
-      })
-      .join('')}
+    )
+  }).join('')}
   </tbody>
   </table>
 `
