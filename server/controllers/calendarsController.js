@@ -20,6 +20,7 @@ const findWeekThatStartsAt = async (course, weekStartDate, location = 3) => {
   const rows = `B${location}:G${location + 11}`
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!${rows}?key=${API_KEY}`
   const values = await fetchValues(url)
+  if (!values) throw new ApplicationError('Try again later', 503, { rows, course, weekStartDate, url })
   if (values.find(row => row.find(v => v === weekStartDate))) return values
   // Sanity check
   if (!values[1][1]) throw new Error('Jotain viturallaan') && []
