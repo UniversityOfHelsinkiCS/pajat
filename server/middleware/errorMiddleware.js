@@ -1,5 +1,10 @@
+const logger = require('@util/logger')
+
 const errorHandler = (error, req, res, next) => {
-  console.error(error.message, error.name, error.extra)
+  logger.error(req.url)
+  logger.error(error.name)
+  logger.error(error.message)
+  console.error(req.url, error)
 
   if (error.name === 'ApplicationError') {
     return res.status(error.status).send({ error: error.message })

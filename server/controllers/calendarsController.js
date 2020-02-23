@@ -4,6 +4,8 @@ const { API_KEY, SHEET_ID, fetchValues } = require('@util/common')
 const getHelp = async () => {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!A1:B48?key=${API_KEY}`
   const courseNames = await fetchValues(url)
+  if (!courseNames) return undefined
+
   const hashMap = courseNames.reduce((acc, keyValPair) => {
     const [fullName, short] = keyValPair
     acc[fullName] = short
@@ -13,22 +15,28 @@ const getHelp = async () => {
   return hashMap
 }
 
-// Table is from B to G, starts at row 3 and is 11 rows high.
-const getWeeks = async (course, currentWeekStartsAt, nextWeekStartsAt, location = 3, currentWeek, nextWeek) => {
-  // TODO: Cache
-  if (currentWeek && nextWeek) return [currentWeek, nextWeek]
-
+const findWeekThatStartsAt = async (course, weekStartDate, location = 3) => {
+  // Table is from B to G, starts at row 3 and is 11 rows high.
   const rows = `B${location}:G${location + 11}`
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!${rows}?key=${API_KEY}`
-
   const values = await fetchValues(url)
-  const currentWeekRows = (values.find(row => row.find(v => v === currentWeekStartsAt)) ? values : undefined) || currentWeek
-  const nextWeekRows = (values.find(row => row.find(v => v === nextWeekStartsAt)) ? values : undefined) || nextWeek
-
+  if (values.find(row => row.find(v => v === weekStartDate))) return values
   // Sanity check
-  if (!values[1][1]) return console.error('Jotain viturallaan') && []
+  if (!values[1][1]) throw new Error('Jotain viturallaan') && []
+  return findWeekThatStartsAt(course, weekStartDate, location + 12)
+}
 
-  return getWeeks(course, currentWeekStartsAt, nextWeekStartsAt, location + 12, currentWeekRows, nextWeekRows)
+const getWeekForCourse = async (course, week) => {
+  const currentWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F1?key=${API_KEY}`
+  const nextWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F2?key=${API_KEY}`
+  const url = week === 'next' ? nextWeekUrl : currentWeekUrl
+  const weekValues = await fetchValues(url)
+  if (!weekValues) return undefined
+
+  const weekStartsAt = weekValues[0][0]
+
+  const weekRows = await findWeekThatStartsAt(course, weekStartsAt)
+  return weekRows
 }
 
 const mankeloi = async (values) => {
@@ -60,21 +68,9 @@ const mankeloi = async (values) => {
   return days
 }
 
-const getCurrentAndNext = async (course = 'kaikki') => {
-  const currentWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F1?key=${API_KEY}`
-  const nextWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F2?key=${API_KEY}`
-  const currentWeekValues = await fetchValues(currentWeekUrl)
-  const nextWeekValues = await fetchValues(nextWeekUrl)
-  const currentWeekStartsAt = currentWeekValues[0][0]
-  const nextWeekStartsAt = nextWeekValues[0][0]
-
-  const [currentWeekRows, nextWeekRows] = await getWeeks(course, currentWeekStartsAt, nextWeekStartsAt)
-
-  return [currentWeekRows, nextWeekRows]
-}
-
 const getAll = async (req, res) => {
-  const [current, next] = await getCurrentAndNext()
+  const current = await getWeekForCourse('kaikki', 'current')
+  const next = await getWeekForCourse('kaikki', 'next')
   const mankeledCurrent = await mankeloi(current)
   const mankeledNext = await mankeloi(next)
   res.send([mankeledCurrent, mankeledNext])
@@ -112,33 +108,37 @@ const weekToSingleCourseTable = (week, pajaTimeColor = 'lightgray', pajaTimeText
 `
 )
 
-const weekToKaikkiTable = week => (
-  `
-  <table>
-  <thead>
-    <tr>
-      ${week[0].map((day, idx) => (`<td>${(idx !== 0) ? `${week[1][idx]} ${day}` : ''}</td>`)).join('')}
-    </tr>
-  </thead>
-  <tbody>
-    ${week.map((row, idx) => {
+const weekToKaikkiTable = (week) => {
+  const headerRow = week[0].map((day, idx) => (`<td>${(idx !== 0) ? `${week[1][idx]} ${day}` : ''}</td>`)).join('')
+  const body = week.map((row, idx) => {
     if (idx < 2) return ''
     while (row.length < 6) row.push('')
 
     return (
       `<tr>
-        ${row.map(val => `<td>${val}</td>`).join('')}
-      </tr>`
+      ${row.map(val => `<td>${val}</td>`).join('')}
+    </tr>`
     )
-  }).join('')}
+  }).join('')
+
+  return (
+    `
+  <table>
+  <thead>
+    <tr>
+      ${headerRow}
+    </tr>
+  </thead>
+  <tbody>
+    ${body}
   </tbody>
   </table>
 `
-)
+  )
+}
 
 const getSingleCourseTable = async (course, week, includeName = true, pajaTimeColor, pajaTimeText) => {
-  const [current, next] = await getCurrentAndNext(course)
-  const chosenWeek = week === 'next' ? next : current
+  const chosenWeek = await getWeekForCourse(course, week)
 
   return `
     ${includeName ? await getHeader(course) : ''}
@@ -149,8 +149,8 @@ const getSingleCourseTable = async (course, week, includeName = true, pajaTimeCo
 const getKaikkiTable = async (week, includeHelp = true, courses = []) => {
   const helpMap = await getHelp()
   const course = 'kaikki'
-  const [current, next] = await getCurrentAndNext(course, week)
-  const chosenWeek = week === 'next' ? next : current
+  const chosenWeek = await getWeekForCourse(course, week)
+  if (!chosenWeek) return undefined
 
   const weekWithConvertedNames = chosenWeek.map(row => row.map((field) => {
     const longNames = field.split(', ')
@@ -196,6 +196,8 @@ const iframe = async (req, res) => {
     ? await getKaikkiTable(week, help !== 'false', courses)
     : await getSingleCourseTable(course, week, name !== 'false', pajaTimeColor, pajaTimeText)
 
+  if (!table) throw new ApplicationError('Try again later', 503)
+
   const html = `
   <html>
   <style>
@@ -219,8 +221,8 @@ const iframe = async (req, res) => {
 }
 
 const screen = async (req, res) => {
-  const table = (await getKaikkiTable('current', true)).replace(/2020/g, '')
-
+  const table = await getKaikkiTable('current', true)
+  if (!table) throw new ApplicationError('Try again later', 503)
   const date = new Date()
   const day = date.getDay()
 
@@ -265,7 +267,7 @@ const screen = async (req, res) => {
   </style>
   <body>
   <h2>BK107 Paja / Workshop</h2>
-  ${table}
+  ${table.replace(/2020/g, '')}
   </body>
   </html
   `
