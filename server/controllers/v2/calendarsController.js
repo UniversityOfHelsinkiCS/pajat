@@ -1,3 +1,4 @@
+const { ApplicationError } = require('@util/customErrors')
 const { API_KEY, SHEET_ID, fetchValues } = require('@util/common')
 
 const translations = {
@@ -25,25 +26,16 @@ const getHeader = async (course) => {
   return `<h2>${longName} (${shortName})</h2>`
 }
 
-const findWeekThatStartsAt = async (course, weekStartDate, location = 3) => {
-  const rows = `B${location}:G${location + 11}`
+const getWeekForCourse = async (course, week) => {
+  // <3
+  const currentWeekRows = 'B3:G14'
+  const nextWeekRows = 'B15:G26'
+  const rows = week === 'next' ? nextWeekRows : currentWeekRows
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!${rows}?key=${API_KEY}`
   const values = await fetchValues(url)
-  if (values.find(row => row.find(v => v === weekStartDate))) return values
-  // Sanity check
-  if (!values[1][1]) throw new Error('Jotain viturallaan') && []
-  return findWeekThatStartsAt(course, weekStartDate, location + 12)
-}
+  if (!values) throw new ApplicationError('Try again later', 503, { rows, course, weekStartDate, url })
 
-const getWeekForCourse = async (course, week) => {
-  const currentWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F1?key=${API_KEY}`
-  const nextWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F2?key=${API_KEY}`
-  const url = week === 'next' ? nextWeekUrl : currentWeekUrl
-  const weekValues = await fetchValues(url)
-  const weekStartsAt = weekValues[0][0]
-
-  const weekRows = await findWeekThatStartsAt(course, weekStartsAt)
-  return weekRows
+  return values
 }
 
 const weekToSingleCourseTable = (

@@ -15,34 +15,21 @@ const getHelp = async () => {
   return hashMap
 }
 
-const findWeekThatStartsAt = async (course, weekStartDate, location = 3) => {
-  // Table is from B to G, starts at row 3 and is 11 rows high.
-  const rows = `B${location}:G${location + 11}`
+const getWeekForCourse = async (course, week) => {
+  // <3
+  const currentWeekRows = 'B3:G14'
+  const nextWeekRows = 'B15:G26'
+  const rows = week === 'next' ? nextWeekRows : currentWeekRows
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/ohjaus-${course}!${rows}?key=${API_KEY}`
   const values = await fetchValues(url)
-  if (!values) throw new ApplicationError('Try again later', 503, { rows, course, weekStartDate, url })
-  if (values.find(row => row.find(v => v === weekStartDate))) return values
-  // Sanity check
-  if (!values[1][1]) throw new Error('Jotain viturallaan') && []
-  return findWeekThatStartsAt(course, weekStartDate, location + 12)
-}
+  if (!values) throw new ApplicationError('Try again later', 503, { rows, course, url })
 
-const getWeekForCourse = async (course, week) => {
-  const currentWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F1?key=${API_KEY}`
-  const nextWeekUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Kurssit!F2?key=${API_KEY}`
-  const url = week === 'next' ? nextWeekUrl : currentWeekUrl
-  const weekValues = await fetchValues(url)
-  if (!weekValues) return undefined
-
-  const weekStartsAt = weekValues[0][0]
-
-  const weekRows = await findWeekThatStartsAt(course, weekStartsAt)
-  return weekRows
+  return values
 }
 
 const mankeloi = async (values) => {
   const helpMap = await getHelp()
-  const days = values[1].map((v, idx) => {
+  const days = values && values[1] && values[1].map((v, idx) => {
     const value = v.trim()
     if (!['Ma', 'Ti', 'Ke', 'To', 'Pe'].includes(value)) return undefined
 
@@ -70,11 +57,15 @@ const mankeloi = async (values) => {
 }
 
 const getAll = async (req, res) => {
-  const current = await getWeekForCourse('kaikki', 'current')
-  const next = await getWeekForCourse('kaikki', 'next')
-  const mankeledCurrent = await mankeloi(current)
-  const mankeledNext = await mankeloi(next)
-  res.send([mankeledCurrent, mankeledNext])
+  const getAndMankeloi = async (course, week) => {
+    const weekData = await getWeekForCourse(course, week)
+    if (!weekData) return []
+    return mankeloi(weekData)
+  }
+
+  const current = await getAndMankeloi('kaikki', 'current')
+  const next = await getAndMankeloi('kaikki', 'next')
+  res.send([current, next])
 }
 
 const getHeader = async (course) => {
