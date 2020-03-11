@@ -17,7 +17,10 @@ const refreshCache = async (sheetsUrl) => {
     const response = await axios.get(encodeURI(sheetsUrl))
     const { values } = response.data
     if (!values) return false
-
+    // Thank google sheets for responding with crap
+    if (values.find(arr => arr.find(v => v.toLowerCase().includes('#error') || v.toLowerCase().includes('loading')))) {
+      return false
+    }
     cache.set(sheetsUrl, values)
     return values
   } catch (e) {
