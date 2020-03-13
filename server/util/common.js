@@ -18,7 +18,9 @@ const refreshCache = async (sheetsUrl) => {
     const { values } = response.data
     if (!values) return false
     // Thank google sheets for responding with crap
-    if (values.find(arr => arr.find(v => v.toLowerCase().includes('#error') || v.toLowerCase().includes('loading')))) {
+    if (values.find(arr => arr.find(v => v.toLowerCase().includes('#error')
+      || v.toLowerCase().includes('#name')
+      || v.toLowerCase().includes('loading')))) {
       return false
     }
     cache.set(sheetsUrl, values)
