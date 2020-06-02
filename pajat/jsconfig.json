@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2017",
+    "module": "commonjs",
     "allowSyntheticDefaultImports": false,
     "baseUrl": "./",
     "paths": {
@@ -10,7 +11,7 @@
       "Utilities/*": ["client/util/*"],
       "Components/*": ["client/components/*"],
       "Assets/*": ["client/assets/*"],
-      "@root/*": ["*"],
+      "@root/*": ["*"]
     }
   },
   "exclude": ["node_modules", "dist"]
