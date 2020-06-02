@@ -1,9 +1,17 @@
 # Pajat
 
+Create .env file with
+
+```
+API_KEY=
+DOCUMENT_ID=
+```
+
+Fill in document id and api key.
+
 Run
 
 ```
-$ npm install
 $ docker-compose up
 ```
 
