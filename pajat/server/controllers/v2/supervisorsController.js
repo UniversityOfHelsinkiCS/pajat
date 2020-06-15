@@ -27,9 +27,7 @@ const getMockPerson = async (req, res) => {
     return res.send(createdPerson);
   }
 
-  existingPerson.loginCode = 'UPDATED';
-
-  existingPerson.save();
+  existingPerson.updateLoginCode();
 
   return res.send(existingPerson);
 };
