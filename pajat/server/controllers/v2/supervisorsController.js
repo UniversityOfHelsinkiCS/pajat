@@ -25,6 +25,73 @@ const getCourses = async (req, res) => {
   }
 };
 
+/*
+get daily data from database by date and course
+*/
+const getDailyData = async (req, res) => {
+  const { date, course } = req.params;
+  const year = date.split('-')[0];
+  const month = date.split('-')[1] - 1;
+  const day = date.split('-')[2];
+
+  const date1 = new Date(year, month, day);
+  const date2 = new Date(year, month, parseInt(day) + 1);
+
+  const getSortedList = (courseId, dataList) => {
+    const clockTimes = [
+      new Date(year, month, day, 10),
+      new Date(year, month, day, 11),
+      new Date(year, month, day, 12),
+      new Date(year, month, day, 13),
+      new Date(year, month, day, 14),
+      new Date(year, month, day, 15),
+      new Date(year, month, day, 16),
+      new Date(year, month, day, 17),
+      new Date(year, month, day, 18),
+      new Date(year, month, day, 19),
+    ];
+    if (dataList.length > 0) {
+      const data = [];
+      clockTimes.forEach((clockTime) => {
+        console.log(clockTime);
+        const value = dataList.find((element) => element.time === clockTime);
+        if (value) {
+          data.push(value);
+        } else
+          data.push({
+            time: clockTime,
+            courseId: parseInt(courseId),
+            students: 0,
+          });
+      });
+      return data;
+    }
+    const data = clockTimes.map((clockTime) => ({
+      time: clockTime,
+      courseId: parseInt(courseId),
+      students: 0,
+    }));
+    return data;
+  };
+
+  try {
+    const result = await Statistic.findAll({
+      where: {
+        time: {
+          [Op.between]: [date1, date2],
+        },
+        courseId: course,
+      },
+    });
+    const json = JSON.stringify(result);
+    const jsonObj = JSON.parse(json);
+    const sortedResult = await getSortedList(course, jsonObj);
+    res.send(sortedResult);
+  } catch (e) {
+    res.send(e);
+  }
+};
+
 const getMockPerson = async (req, res) => {
   const existingPerson = await Person.findOne({
     where: {
@@ -52,4 +119,5 @@ const getMockPerson = async (req, res) => {
 module.exports = {
   getCourses,
   getMockPerson,
+  getDailyData,
 };

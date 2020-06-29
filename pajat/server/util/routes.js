@@ -12,8 +12,8 @@ router.get('/luokka', (req, res) => res.type('text/plain').send('BK107')); // Pa
  * Supervisor app routes
  */
 router.get('/courses/', supervisors2.getCourses);
+router.get('/statistics/:course/:date/', supervisors2.getDailyData);
 router.get('/mock/', supervisors2.getMockPerson);
-
 
 /**
  * Calendar routes
