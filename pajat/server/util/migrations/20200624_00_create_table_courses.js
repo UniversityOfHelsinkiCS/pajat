@@ -29,6 +29,6 @@ module.exports = {
     ]);
   },
   down: async (queryInterface) => {
-    return queryInterface.dropTable('courses');
+    return queryInterface.dropAllTables();
   },
 };

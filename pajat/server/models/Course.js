@@ -1,4 +1,4 @@
-const { Model, STRING } = require('sequelize');
+const { Model, STRING, INTEGER } = require('sequelize');
 const { connection } = require('../util/db');
 
 class Course extends Model {}

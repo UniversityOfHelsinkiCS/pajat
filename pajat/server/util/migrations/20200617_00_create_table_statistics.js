@@ -33,6 +33,6 @@ module.exports = {
     ]);
   },
   down: async (queryInterface) => {
-    return queryInterface.dropAllTables();
+    return queryInterface.dropTable('statistics');
   },
 };

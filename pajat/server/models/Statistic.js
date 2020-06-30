@@ -1,6 +1,5 @@
 const { Model, DATE, INTEGER } = require('sequelize');
 const { connection } = require('../util/db');
-const Course = require('./Course');
 
 class Statistic extends Model {}
 
