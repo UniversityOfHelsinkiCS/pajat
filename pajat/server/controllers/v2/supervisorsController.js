@@ -8,7 +8,7 @@ const { Op } = require('sequelize');
 // list of all courses
 const getCourses = async (req, res) => {
   try {
-    const existingCourses = await Course.findAll();
+    const existingCourses = await Course.findAll({ raw: true });
     if (existingCourses.length === 0) {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/kurssit!A1:B20?key=${API_KEY}`;
       const values = await fetchValues(url);
@@ -17,7 +17,7 @@ const getCourses = async (req, res) => {
         shortName: course[1],
       }));
       const courseDataBlock = await Course.bulkCreate(dataBlock);
-      const result = await Course.findAll();
+      const result = await Course.findAll({ raw: true });
       res.send(result);
     } else res.send(existingCourses);
   } catch (e) {
@@ -82,6 +82,7 @@ const getDailyData = async (req, res) => {
         },
         courseId: course,
       },
+      raw: true,
     });
     const json = JSON.stringify(result);
     const jsonObj = JSON.parse(json);
