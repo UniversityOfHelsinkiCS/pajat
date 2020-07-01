@@ -5,10 +5,10 @@ class Course extends Model {}
 
 Course.init(
   {
-    name: {
+    title: {
       type: STRING,
     },
-    shortName: {
+    shortTitle: {
       type: STRING,
     },
   },

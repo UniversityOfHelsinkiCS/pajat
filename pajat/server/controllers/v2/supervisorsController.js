@@ -13,8 +13,8 @@ const getCourses = async (req, res) => {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/kurssit!A1:B20?key=${API_KEY}`;
       const values = await fetchValues(url);
       const dataBlock = values.map((course, index) => ({
-        name: course[0],
-        shortName: course[1],
+        title: course[0],
+        shortTitle: course[1],
       }));
       const courseDataBlock = await Course.bulkCreate(dataBlock);
       const result = await Course.findAll({ raw: true });
