@@ -1,22 +1,14 @@
 const { Model, STRING } = require('sequelize');
 const { connection } = require('../util/db');
 
-class Person extends Model {
-  async updateLoginCode() {
-    this.loginCode = `${Math.round(Math.random() * 5000)}`;
-    this.save();
-  }
-}
+class Person extends Model {}
 
 Person.init(
   {
-    firstNames: {
+    fullName: {
       type: STRING,
     },
-    lastName: {
-      type: STRING,
-    },
-    loginCode: {
+    key: {
       type: STRING,
     },
   },
@@ -25,7 +17,7 @@ Person.init(
     sequelize: connection.sequelize,
     modelName: 'person',
     tableName: 'persons',
-  },
+  }
 );
 
 module.exports = Person;
