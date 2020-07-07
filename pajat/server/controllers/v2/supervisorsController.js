@@ -5,6 +5,40 @@ const Statistic = require('@models/Statistic');
 const Course = require('@models/Course');
 const { Op } = require('sequelize');
 
+// login endpoint
+const postLogin = async (req, res) => {
+  try {
+    const { key } = req.body;
+    const user = await Person.findOne({
+      where: {
+        key,
+      },
+      raw: true,
+    });
+    if (!user) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/kävijätilasto!A3:B100?key=${API_KEY}`;
+      const values = await fetchValues(url);
+      const result = values.find((row) => row[1] === key);
+      if (!result) {
+        return res.sendStatus(403);
+      }
+      const createdUser = await Person.create({
+        fullName: result[0],
+        key: result[1],
+      });
+      res.send(createdUser);
+    } else res.send(user);
+  } catch (e) {
+    res.send(e);
+  }
+};
+
+// get authentication
+const getAuthentication = (req, res) => {
+  const { user } = req;
+  res.send(user);
+};
+
 // list of all courses
 const getCourses = async (req, res) => {
   try {
@@ -16,10 +50,23 @@ const getCourses = async (req, res) => {
         title: course[0],
         shortTitle: course[1],
       }));
-      const courseDataBlock = await Course.bulkCreate(dataBlock);
+      await Course.bulkCreate(dataBlock);
       const result = await Course.findAll({ raw: true });
       res.send(result);
     } else res.send(existingCourses);
+  } catch (e) {
+    res.send(e);
+  }
+};
+
+// delete course data
+const removeCourses = async (req, res) => {
+  try {
+    await Course.destroy({
+      truncate: { cascade: true },
+    });
+    const courses = Course.findAll({ raw: true });
+    res.send(courses);
   } catch (e) {
     res.send(e);
   }
@@ -30,14 +77,14 @@ get daily data from database by date and course
 */
 const getDailyData = async (req, res) => {
   const { date, course } = req.params;
-  const year = date.split('-')[0];
-  const month = date.split('-')[1] - 1;
-  const day = date.split('-')[2];
+  const year = parseInt(date.split('-')[0], 10);
+  const month = parseInt(date.split('-')[1], 10) - 1;
+  const day = parseInt(date.split('-')[2], 10);
 
   const date1 = new Date(year, month, day);
-  const date2 = new Date(year, month, parseInt(day) + 1);
+  const date2 = new Date(year, month, day + 1);
 
-  const getSortedList = (courseId, dataList) => {
+  const getSortedList = (courseId, courses) => {
     const clockTimes = [
       new Date(year, month, day, 10),
       new Date(year, month, day, 11),
@@ -50,11 +97,10 @@ const getDailyData = async (req, res) => {
       new Date(year, month, day, 18),
       new Date(year, month, day, 19),
     ];
-    if (dataList.length > 0) {
+    if (courses.length > 0) {
       const data = [];
       clockTimes.forEach((clockTime) => {
-        console.log(clockTime);
-        const value = dataList.find((element) => element.time === clockTime);
+        const value = courses.find((element) => element.time === clockTime);
         if (value) {
           data.push(value);
         } else
@@ -93,32 +139,10 @@ const getDailyData = async (req, res) => {
   }
 };
 
-const getMockPerson = async (req, res) => {
-  const existingPerson = await Person.findOne({
-    where: {
-      firstNames: 'Jami',
-    },
-  });
-
-  if (!existingPerson) {
-    const createdPerson = await Person.create({
-      firstNames: 'Jami',
-      lastName: 'Kousa',
-      loginCode: 'SECRET',
-    });
-
-    return res.send(createdPerson);
-  }
-
-  existingPerson.loginCode = 'UPDATED';
-
-  existingPerson.save();
-
-  return res.send(existingPerson);
-};
-
 module.exports = {
   getCourses,
-  getMockPerson,
   getDailyData,
+  removeCourses,
+  postLogin,
+  getAuthentication,
 };

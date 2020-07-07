@@ -2,6 +2,7 @@ const Router = require('express');
 const calendar = require('@controllers/calendarsController');
 const calendar2 = require('@controllers/v2/calendarsController');
 const supervisors2 = require('@controllers/v2/supervisorsController');
+const auth = require('@middleware/authMiddleware');
 
 const router = Router();
 
@@ -11,9 +12,12 @@ router.get('/luokka', (req, res) => res.type('text/plain').send('BK107')); // Pa
 /**
  * Supervisor app routes
  */
+router.post('/login/', supervisors2.postLogin);
+router.get('/auth/', auth, supervisors2.getAuthentication);
 router.get('/courses/', supervisors2.getCourses);
+router.get('/courses/remove', supervisors2.removeCourses);
 router.get('/statistics/:course/:date/', supervisors2.getDailyData);
-router.get('/mock/', supervisors2.getMockPerson);
+router.get('/testuser/', supervisors2.getTestUser);
 
 /**
  * Calendar routes
