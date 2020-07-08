@@ -7,12 +7,13 @@ import {
   Text,
   SafeAreaView,
 } from 'react-native';
+import AppBar from '../AppBar';
 
 const ListItem = ({ item }) => {
   return (
     <View style={styles.item}>
-      <Text style={styles.itemTextBold}>{item[0]}</Text>
-      <Text style={styles.itemText}>{item[1]}</Text>
+      <Text style={styles.itemTextBold}>{item.title}</Text>
+      <Text style={styles.itemText}>{item.shortTitle}</Text>
     </View>
   );
 };
@@ -23,12 +24,11 @@ const CourseList = () => {
   useEffect(() => {
     const getCourses = async () => {
       try {
-        const result = await fetch(
-          'https://study.cs.helsinki.fi/pajat/api/courses'
+        const response = await fetch(
+          'http://0c3f024331fb.ngrok.io/api/courses/'
         );
-        let courseList = await result.json();
-        console.log('list', courseList);
-        setCourses(courseList);
+        const json = await response.json();
+        setCourses(json);
       } catch (e) {
         console.log(e);
       }
@@ -40,6 +40,7 @@ const CourseList = () => {
 
   return (
     <View style={styles.container}>
+      <AppBar title='Kurssit' />
       <FlatList
         data={courses}
         keyExtractor={(item, index) => index.toString()}
@@ -77,7 +78,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: 1,
   },
   headerBar: {
     height: 40,
