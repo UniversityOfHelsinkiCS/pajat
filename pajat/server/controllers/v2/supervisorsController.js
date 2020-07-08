@@ -44,8 +44,12 @@ const postLogin = async (req, res) => {
 
 // get authentication
 const getAuthentication = async (req, res) => {
-  const { user } = req;
-  res.send(user);
+  try {
+    const { user } = req;
+    res.send(user);
+  } catch (e) {
+    res.send(e);
+  }
 };
 
 // list of all courses
