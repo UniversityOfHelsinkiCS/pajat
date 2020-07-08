@@ -9,6 +9,9 @@ const { Op } = require('sequelize');
 const postLogin = async (req, res) => {
   try {
     const { key } = req.body;
+    if (!key) {
+      res.sendStatus(403);
+    }
     const user = await Person.findOne({
       where: {
         key,
@@ -20,11 +23,17 @@ const postLogin = async (req, res) => {
       const values = await fetchValues(url);
       const result = values.find((row) => row[1] === key);
       if (!result) {
-        return res.sendStatus(403);
+        res.sendStatus(403);
       }
-      const createdUser = await Person.create({
+      await Person.create({
         fullName: result[0],
         key: result[1],
+      });
+      const createdUser = await Person.findOne({
+        where: {
+          key,
+        },
+        raw: true,
       });
       res.send(createdUser);
     } else res.send(user);
@@ -34,7 +43,7 @@ const postLogin = async (req, res) => {
 };
 
 // get authentication
-const getAuthentication = (req, res) => {
+const getAuthentication = async (req, res) => {
   const { user } = req;
   res.send(user);
 };
@@ -54,19 +63,6 @@ const getCourses = async (req, res) => {
       const result = await Course.findAll({ raw: true });
       res.send(result);
     } else res.send(existingCourses);
-  } catch (e) {
-    res.send(e);
-  }
-};
-
-// delete course data
-const removeCourses = async (req, res) => {
-  try {
-    await Course.destroy({
-      truncate: { cascade: true },
-    });
-    const courses = Course.findAll({ raw: true });
-    res.send(courses);
   } catch (e) {
     res.send(e);
   }
@@ -142,7 +138,6 @@ const getDailyData = async (req, res) => {
 module.exports = {
   getCourses,
   getDailyData,
-  removeCourses,
   postLogin,
   getAuthentication,
 };
