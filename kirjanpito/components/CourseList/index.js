@@ -25,7 +25,7 @@ const CourseList = () => {
     const getCourses = async () => {
       try {
         const response = await fetch(
-          'http://0c3f024331fb.ngrok.io/api/courses/'
+          'https://study.cs.helsinki.fi/pajat/api/courses/'
         );
         const json = await response.json();
         setCourses(json);

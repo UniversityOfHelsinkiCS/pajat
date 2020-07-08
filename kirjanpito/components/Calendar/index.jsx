@@ -67,7 +67,7 @@ const CalendarView = () => {
     const getStatistics = async () => {
       try {
         const result = await fetch(
-          `http://0c3f024331fb.ngrok.io/api/statistics/${courseId}/${parsedDate}/`
+          `https://study.cs.helsinki.fi/pajat/statistics/${courseId}/${parsedDate}/`
         );
         let json = await result.json();
         setStatistics(json);
@@ -77,7 +77,9 @@ const CalendarView = () => {
     };
     const getCourses = async () => {
       try {
-        const result = await fetch('http://0c3f024331fb.ngrok.io/api/courses/');
+        const result = await fetch(
+          'https://study.cs.helsinki.fi/pajat/api/courses/'
+        );
         const json = await result.json();
         setCourses(json);
       } catch (e) {

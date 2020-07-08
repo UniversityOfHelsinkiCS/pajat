@@ -12,7 +12,7 @@ const initialState = {
 
 export const signIn = (key) => async (dispatch) => {
   try {
-    const url = 'http://0c3f024331fb.ngrok.io/api/login/';
+    const url = 'https://study.cs.helsinki.fi/pajat/api/login/';
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -42,7 +42,7 @@ export const loadUser = () => async (dispatch) => {
   try {
     const key = await getAccessKey();
     if (key) {
-      const url = 'http://0c3f024331fb.ngrok.io/api/auth/';
+      const url = 'https://study.cs.helsinki.fi/pajat/api/auth/';
       const response = await fetch(url, {
         method: 'GET',
         headers: {
