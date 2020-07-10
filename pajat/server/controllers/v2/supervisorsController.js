@@ -9,8 +9,8 @@ const { Op } = require('sequelize');
 const postLogin = async (req, res) => {
   try {
     const { key } = req.body;
-    if (!key) {
-      res.sendStatus(403);
+    if (!key || key === 'CSDEPT') {
+      return res.sendStatus(403);
     }
     const user = await Person.findOne({
       where: {
@@ -23,10 +23,10 @@ const postLogin = async (req, res) => {
       const values = await fetchValues(url);
       const result = values.find((row) => row[1] === key);
       if (!result) {
-        res.sendStatus(403);
+        return res.sendStatus(403);
       }
       await Person.create({
-        fullName: result[0],
+        fullName: result[0].split(' (')[0],
         key: result[1],
       });
       const createdUser = await Person.findOne({
@@ -35,10 +35,11 @@ const postLogin = async (req, res) => {
         },
         raw: true,
       });
-      res.send(createdUser);
-    } else res.send(user);
+      return res.send(createdUser);
+    }
+    return res.send(user);
   } catch (e) {
-    res.send(e);
+    return res.send(e);
   }
 };
 
@@ -139,9 +140,46 @@ const getDailyData = async (req, res) => {
   }
 };
 
+// remove persons data if there is only one row
+const removePersons = async (req, res) => {
+  try {
+    const users = await Person.findAll();
+    if (users.length > 1) {
+      res.sendStatus(403);
+    }
+    await Person.destroy({
+      truncate: true,
+    });
+    const data = await Person.findAll({ raw: true });
+    res.send(data);
+  } catch (e) {
+    res.send(e);
+  }
+};
+
+// add test user to empty database
+const getTestPerson = async (req, res) => {
+  const { key, fullName } = req.body;
+  try {
+    const users = await Person.findAll();
+    if (users.length === 0) {
+      const testPerson = await Person.create({
+        fullName,
+        key,
+      });
+      res.send(testPerson);
+    }
+    res.send(`Can't add user into database.`);
+  } catch (e) {
+    res.send(e);
+  }
+};
+
 module.exports = {
   getCourses,
   getDailyData,
   postLogin,
   getAuthentication,
+  removePersons,
+  getTestPerson,
 };
