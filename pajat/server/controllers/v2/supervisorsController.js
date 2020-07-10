@@ -153,6 +153,12 @@ const removePersons = async (req, res) => {
     const data = await Person.findAll({ raw: true });
     res.send(data);
   } catch (e) {
+    if (e.name === 'SequelizeDatabaseError') {
+      await Person.destroy({
+        truncate: true,
+      });
+      res.send(e);
+    }
     res.send(e);
   }
 };
