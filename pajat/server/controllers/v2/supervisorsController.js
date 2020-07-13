@@ -140,25 +140,15 @@ const getDailyData = async (req, res) => {
   }
 };
 
-// remove persons data if there is only one row
+// remove persons data
 const removePersons = async (req, res) => {
   try {
-    const users = await Person.findAll();
-    if (users.length > 1) {
-      res.sendStatus(403);
-    }
     await Person.destroy({
       truncate: true,
     });
     const data = await Person.findAll({ raw: true });
     res.send(data);
   } catch (e) {
-    if (e.name === 'SequelizeDatabaseError') {
-      await Person.destroy({
-        truncate: true,
-      });
-      res.send(e);
-    }
     res.send(e);
   }
 };
