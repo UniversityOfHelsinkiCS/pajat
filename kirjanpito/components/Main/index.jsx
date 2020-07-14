@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, Platform } from 'react-native';
 import CourseList from '../CourseList';
 import Calendar from '../Calendar';
 import {
@@ -11,15 +11,19 @@ import { NavigationContainer } from '@react-navigation/native';
 import { navigationRef } from './RootNavigation';
 import * as RootNavigation from './RootNavigation.js';
 import { logOut } from '../../reducers/loginReducer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import theme from '../../theme.js';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const Drawer = createDrawerNavigator();
 
 const CustomDrawerContent = ({ submitLogout }) => {
+  const user = useSelector((state) => state.login.user);
   return (
     <DrawerContentScrollView>
+      <View style={styles.user}>
+        <Text style={styles.userText}>{user.fullName}</Text>
+      </View>
       <DrawerItem
         label='Ohjaustilastot'
         onPress={() => RootNavigation.navigate('Ohjaustilastot')}
@@ -67,11 +71,20 @@ const styles = StyleSheet.create({
   default: {
     flex: 1,
     backgroundColor: 'black',
+    paddingTop: Platform.OS === 'android' ? 25 : 0,
   },
   navHeader: {
     height: 80,
   },
   navHeaderTitle: {
     fontSize: theme.fontSizes.heading,
+  },
+  user: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 50,
+  },
+  userText: {
+    fontWeight: 'bold',
   },
 });

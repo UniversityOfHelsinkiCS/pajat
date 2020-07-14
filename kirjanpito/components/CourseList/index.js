@@ -8,6 +8,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import AppBar from '../AppBar';
+import url from '../../config/url';
 
 const ListItem = ({ item }) => {
   return (
@@ -24,9 +25,7 @@ const CourseList = () => {
   useEffect(() => {
     const getCourses = async () => {
       try {
-        const response = await fetch(
-          'https://study.cs.helsinki.fi/pajat/api/courses/'
-        );
+        const response = await fetch(`${url}/api/courses/`);
         const json = await response.json();
         setCourses(json);
       } catch (e) {

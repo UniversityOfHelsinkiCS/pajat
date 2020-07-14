@@ -13,6 +13,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 import theme from '../../theme';
 import AppBar from '../AppBar';
+import url from '../../config/url';
 
 const parseClockTime = (time) => {
   const hour = time.split('T')[1].split(':')[0];
@@ -67,7 +68,7 @@ const CalendarView = () => {
     const getStatistics = async () => {
       try {
         const result = await fetch(
-          `https://study.cs.helsinki.fi/pajat/statistics/${courseId}/${parsedDate}/`
+          `${url}/api/statistics/${courseId}/${parsedDate}/`
         );
         let json = await result.json();
         setStatistics(json);
@@ -77,9 +78,7 @@ const CalendarView = () => {
     };
     const getCourses = async () => {
       try {
-        const result = await fetch(
-          'https://study.cs.helsinki.fi/pajat/api/courses/'
-        );
+        const result = await fetch(`${url}/pajat/api/courses/`);
         const json = await result.json();
         setCourses(json);
       } catch (e) {
@@ -105,7 +104,7 @@ const CalendarView = () => {
     value: course.id,
   }));
 
-  const days = ['Ma', 'Ti', 'Ke', 'To', 'Pe', 'La', 'Su'];
+  const days = ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La'];
 
   const dateTitle = `${days[date.getDay()]} ${date.toLocaleDateString(
     'fi-FI'
@@ -171,7 +170,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   drop: {
-    backgroundColor: theme.colors.buttonPrimary,
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: 'black',

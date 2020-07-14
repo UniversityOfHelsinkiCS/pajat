@@ -4,6 +4,8 @@ import {
   removeAccessKey,
 } from '../utils/authStorage';
 
+import url from '../config/url';
+
 const initialState = {
   isLoading: true,
   isLogin: false,
@@ -12,8 +14,8 @@ const initialState = {
 
 export const signIn = (key) => async (dispatch) => {
   try {
-    const url = 'https://study.cs.helsinki.fi/pajat/api/login/';
-    const response = await fetch(url, {
+    const path = `${url}/api/login/`;
+    const response = await fetch(path, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,7 +25,8 @@ export const signIn = (key) => async (dispatch) => {
       }),
     });
     const json = await response.json();
-    if (json) {
+    console.log('json', json);
+    if (json.fullName) {
       storeAccessKey(key);
       dispatch({
         type: 'LOGIN_SUCCESS',
@@ -42,7 +45,7 @@ export const loadUser = () => async (dispatch) => {
   try {
     const key = await getAccessKey();
     if (key) {
-      const url = 'https://study.cs.helsinki.fi/pajat/api/auth/';
+      const url = `${url}/api/auth/`;
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -90,7 +93,7 @@ const loginReducer = (state = initialState, action) => {
       return {
         isLogin: true,
         isLoading: false,
-        ...payload,
+        user: payload,
       };
     case 'LOGIN_FAIL':
     case 'LOGOUT':

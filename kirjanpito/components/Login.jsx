@@ -11,14 +11,16 @@ import {
   KeyboardAvoidingView,
   Keyboard,
 } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { signIn } from '../reducers/loginReducer';
 
 const Login = () => {
-  const [password, setPassword] = useState('');
+  const isLogin = useSelector((state) => state.login.isLogin);
+  const [key, setKey] = useState('');
   const dispatch = useDispatch();
-  const submitLogin = async (password) => {
-    dispatch(signIn(password));
+  const submitLogin = async (key) => {
+    dispatch(signIn(key));
+    console.log('isLogin', isLogin);
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -31,11 +33,10 @@ const Login = () => {
           </View>
           <TextInput
             style={styles.loginInput}
-            onChangeText={(text) => setPassword(text)}
-            secureTextEntry={true}
+            onChangeText={(text) => setKey(text)}
           />
           <View style={styles.buttonFrame}>
-            <Button title='Kirjaudu' onPress={() => submitLogin(password)} />
+            <Button title='Kirjaudu' onPress={() => submitLogin(key)} />
           </View>
         </KeyboardAvoidingView>
       </View>
