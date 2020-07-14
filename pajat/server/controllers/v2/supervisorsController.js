@@ -4,7 +4,7 @@ const Person = require('@models/Person');
 const Statistic = require('@models/Statistic');
 const Course = require('@models/Course');
 const { Op } = require('sequelize');
-const { connection } = require('../util/db');
+const { connection } = require('../../util/db');
 
 // login endpoint
 const postLogin = async (req, res) => {
