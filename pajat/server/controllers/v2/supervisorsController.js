@@ -4,6 +4,7 @@ const Person = require('@models/Person');
 const Statistic = require('@models/Statistic');
 const Course = require('@models/Course');
 const { Op } = require('sequelize');
+const { connection } = require('../util/db');
 
 // login endpoint
 const postLogin = async (req, res) => {
@@ -140,32 +141,16 @@ const getDailyData = async (req, res) => {
   }
 };
 
-// remove persons data
-const removePersons = async (req, res) => {
+// get courses by person_id
+const getCoursesByPersonId = async (req, res) => {
+  const { person } = req.params;
   try {
-    await Person.destroy({
-      truncate: true,
-    });
-    const data = await Person.findAll({ raw: true });
-    res.send(data);
-  } catch (e) {
-    res.send(e);
-  }
-};
-
-// add test user to empty database
-const getTestPerson = async (req, res) => {
-  const { key, fullName } = req.body;
-  try {
-    const users = await Person.findAll();
-    if (users.length === 0) {
-      const testPerson = await Person.create({
-        fullName,
-        key,
-      });
-      res.send(testPerson);
-    }
-    res.send(`Can't add user into database.`);
+    const courses = await connection.sequelize.query(
+      `SELECT c.title, c.short_title, c.id 
+      FROM (courses AS c JOIN personcourses AS pc ON c.id = pc.course_id) 
+      WHERE pc.person_id = ${person}`
+    );
+    res.send(courses[0]);
   } catch (e) {
     res.send(e);
   }
@@ -176,6 +161,5 @@ module.exports = {
   getDailyData,
   postLogin,
   getAuthentication,
-  removePersons,
-  getTestPerson,
+  getCoursesByPersonId,
 };

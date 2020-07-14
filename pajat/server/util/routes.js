@@ -15,9 +15,8 @@ router.get('/luokka', (req, res) => res.type('text/plain').send('BK107')); // Pa
 router.post('/login/', supervisors2.postLogin);
 router.get('/auth/', auth, supervisors2.getAuthentication);
 router.get('/courses/', supervisors2.getCourses);
+router.get('/courses/:person/', supervisors2.getCoursesByPersonId);
 router.get('/statistics/:course/:date/', supervisors2.getDailyData);
-router.get('/remove/', supervisors2.removePersons);
-router.post('/testperson/', supervisors2.getTestPerson);
 
 /**
  * Calendar routes
