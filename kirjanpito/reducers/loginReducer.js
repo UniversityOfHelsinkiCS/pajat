@@ -25,7 +25,6 @@ export const signIn = (key) => async (dispatch) => {
       }),
     });
     const json = await response.json();
-    console.log('json', json);
     if (json.fullName) {
       storeAccessKey(key);
       dispatch({
@@ -45,8 +44,8 @@ export const loadUser = () => async (dispatch) => {
   try {
     const key = await getAccessKey();
     if (key) {
-      const url = `${url}/api/auth/`;
-      const response = await fetch(url, {
+      const path = `${url}/api/auth/`;
+      const response = await fetch(path, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

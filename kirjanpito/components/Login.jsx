@@ -15,12 +15,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { signIn } from '../reducers/loginReducer';
 
 const Login = () => {
-  const isLogin = useSelector((state) => state.login.isLogin);
   const [key, setKey] = useState('');
   const dispatch = useDispatch();
-  const submitLogin = async (key) => {
+  const submitLogin = (key) => {
     dispatch(signIn(key));
-    console.log('isLogin', isLogin);
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

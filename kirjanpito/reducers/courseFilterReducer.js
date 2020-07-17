@@ -1,5 +1,5 @@
 const initialState = {
-  isFilter: true,
+  isFilter: false,
 };
 
 export const setFilterOn = () => async (dispatch) => {
@@ -19,11 +19,11 @@ const courseFilterReducer = (state = initialState, action) => {
   switch (type) {
     case 'SET_FILTER_ON':
       return {
-        isLogin: true,
+        isFilter: true,
       };
     case 'SET_FILTER_OFF':
       return {
-        isLogin: false,
+        isFilter: false,
       };
     default:
       return state;

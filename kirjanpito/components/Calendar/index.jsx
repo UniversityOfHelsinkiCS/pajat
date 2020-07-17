@@ -14,6 +14,11 @@ import RNPickerSelect from 'react-native-picker-select';
 import theme from '../../theme';
 import AppBar from '../AppBar';
 import url from '../../config/url';
+import { AntDesign } from '@expo/vector-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { setActive } from '../../reducers/studentPanelReducer';
+import { getAccessKey } from '../../utils/authStorage';
+import { loadCourses, setCourseId } from '../../reducers/courseReducer';
 
 const parseClockTime = (time) => {
   const hour = time.split('T')[1].split(':')[0];
@@ -34,29 +39,120 @@ const Dropdown = (props) => {
   );
 };
 
-const ListItem = ({ item }) => {
-  return (
-    <View style={styles.hourRow}>
-      <View style={styles.time}>
-        <Text>{parseClockTime(item.time)}</Text>
-      </View>
-      <View style={styles.students}>
+// student statistics item
+const ListItem = ({ item, index, courseId, render, setRender }) => {
+  const isActive = useSelector((state) => state.panel.active);
+  const panelIndex = useSelector((state) => state.panel.index);
+  const dispatch = useDispatch();
+
+  const setActivePanel = (index) => {
+    dispatch(setActive(index));
+  };
+
+  const renderPage = () => {
+    setRender(render + 1);
+  };
+
+  // increase and decrease students amount
+
+  const addStudent = async (time, course) => {
+    const key = await getAccessKey();
+    try {
+      if (time && course) {
+        const path = `${url}/api/statistics/add/`;
+        const response = await fetch(path, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Access-Key': key,
+          },
+          body: JSON.stringify({
+            time,
+            course,
+          }),
+        });
+        renderPage();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const removeStudent = async (time, course) => {
+    const key = await getAccessKey();
+    try {
+      if (time && course) {
+        const path = `${url}/api/statistics/remove/`;
+        const response = await fetch(path, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Access-Key': key,
+          },
+          body: JSON.stringify({
+            time,
+            course,
+          }),
+        });
+        renderPage();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  // non-active students panel
+  const basicPanel = (
+    <View style={styles.students}>
+      <Text>{item.students}</Text>
+    </View>
+  );
+
+  // active students panel
+  const activePanel = (
+    <View style={styles.students}>
+      <TouchableOpacity onPress={() => removeStudent(item.time, courseId)}>
+        <View style={styles.leftIcon}>
+          <AntDesign name='minussquareo' size={40} color='black' />
+        </View>
+      </TouchableOpacity>
+      <View style={styles.number}>
         <Text>{item.students}</Text>
       </View>
+      <TouchableOpacity onPress={() => addStudent(item.time, courseId)}>
+        <View style={styles.rightIcon}>
+          <AntDesign name='plussquareo' size={40} color='black' />
+        </View>
+      </TouchableOpacity>
     </View>
+  );
+
+  const panel = isActive && panelIndex === index ? activePanel : basicPanel;
+
+  return (
+    <TouchableOpacity onPress={() => setActivePanel(index)}>
+      <View style={styles.hourRow}>
+        <View style={styles.time}>
+          <Text>{parseClockTime(item.time)}</Text>
+        </View>
+        {panel}
+      </View>
+    </TouchableOpacity>
   );
 };
 
 const CalendarView = () => {
+  const courses = useSelector((state) => state.courses.courses);
+  const courseId = useSelector((state) => state.courses.courseId);
+  const dispatch = useDispatch();
+
   const [date, setDate] = useState(new Date());
   const parsedDate = date.toISOString().split('T')[0];
-
-  const [courseId, setCourseId] = useState(1);
-  const [courses, setCourses] = useState([]);
   const [statistics, setStatistics] = useState([]);
 
   const [show, setShow] = useState(false);
   const mode = 'date';
+  const [render, setRender] = useState(false);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -76,24 +172,18 @@ const CalendarView = () => {
         console.log(e);
       }
     };
-    const getCourses = async () => {
-      try {
-        const result = await fetch(`${url}/pajat/api/courses/`);
-        const json = await result.json();
-        setCourses(json);
-      } catch (e) {
-        console.log(e);
-      }
-    };
     if (courses.length === 0) {
-      getCourses();
+      dispatch(loadCourses());
     }
-    getStatistics();
-  }, [date, courseId]);
+    if (courseId) {
+      getStatistics();
+      console.log('render stats');
+    }
+  }, [date, courseId, render]);
 
   const changeCourse = (value) => {
     if (value) {
-      setCourseId(value);
+      dispatch(setCourseId(value));
     }
   };
 
@@ -146,7 +236,15 @@ const CalendarView = () => {
       <FlatList
         data={statistics}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <ListItem item={item} />}
+        renderItem={({ item, index }) => (
+          <ListItem
+            item={item}
+            index={index}
+            courseId={courseId}
+            render={render}
+            setRender={setRender}
+          />
+        )}
         ItemSeparatorComponent={ItemSeparator}
       />
     </View>
@@ -197,7 +295,23 @@ const styles = StyleSheet.create({
   students: {
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
     flex: 1,
+  },
+  leftIcon: {
+    width: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rightIcon: {
+    width: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  number: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   subHead: {
     width: window.width,
