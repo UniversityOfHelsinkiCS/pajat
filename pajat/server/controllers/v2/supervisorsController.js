@@ -102,40 +102,110 @@ const getDailyData = async (req, res) => {
     if (courses.length > 0) {
       const data = [];
       clockTimes.forEach((clockTime) => {
-        const value = courses.find((element) => element.time === clockTime);
+        const findTime = (element, clockTime) => {
+          const value = element.time.getTime() === clockTime.getTime();
+          return value;
+        };
+        const value = courses.find((element) => findTime(element, clockTime));
         if (value) {
           data.push(value);
-        } else
+        } else {
           data.push({
             time: clockTime,
-            courseId: parseInt(courseId),
+            courseId: parseInt(courseId, 10),
             students: 0,
           });
+        }
       });
       return data;
     }
     const data = clockTimes.map((clockTime) => ({
       time: clockTime,
-      courseId: parseInt(courseId),
+      courseId: parseInt(courseId, 10),
       students: 0,
     }));
     return data;
   };
 
   try {
-    const result = await Statistic.findAll({
-      where: {
-        time: {
-          [Op.between]: [date1, date2],
+    if (course) {
+      const result = await Statistic.findAll({
+        where: {
+          time: {
+            [Op.between]: [date1, date2],
+          },
+          courseId: course,
         },
+        raw: true,
+      });
+      const sortedResult = await getSortedList(course, result);
+      res.send(sortedResult);
+    } else res.send([]);
+  } catch (e) {
+    res.send(e);
+  }
+};
+
+// add student to the statistics table
+const addStudent = async (req, res) => {
+  try {
+    const { time, course } = req.body;
+    const existingStatistic = await Statistic.findOne({
+      where: {
+        time,
         courseId: course,
       },
       raw: true,
     });
-    const json = JSON.stringify(result);
-    const jsonObj = JSON.parse(json);
-    const sortedResult = await getSortedList(course, jsonObj);
-    res.send(sortedResult);
+    if (existingStatistic) {
+      await Statistic.update(
+        { students: existingStatistic.students + 1 },
+        {
+          where: {
+            time,
+            courseId: course,
+          },
+        }
+      );
+      res.end();
+    } else {
+      await Statistic.create({
+        time,
+        courseId: course,
+        students: 1,
+      });
+      res.end();
+    }
+  } catch (e) {
+    res.send(e);
+  }
+};
+
+// remove student from the statistics table
+const removeStudent = async (req, res) => {
+  try {
+    const { time, course } = req.body;
+    const existingStatistic = await Statistic.findOne({
+      where: {
+        time,
+        courseId: course,
+      },
+      raw: true,
+    });
+    if (existingStatistic) {
+      if (existingStatistic.students > 0) {
+        await Statistic.update(
+          { students: existingStatistic.students - 1 },
+          {
+            where: {
+              time,
+              courseId: course,
+            },
+          }
+        );
+        res.end();
+      } else res.end();
+    } else res.end();
   } catch (e) {
     res.send(e);
   }
@@ -162,4 +232,6 @@ module.exports = {
   postLogin,
   getAuthentication,
   getCoursesByPersonId,
+  addStudent,
+  removeStudent,
 };

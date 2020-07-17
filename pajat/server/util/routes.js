@@ -17,6 +17,8 @@ router.get('/auth/', auth, supervisors2.getAuthentication);
 router.get('/courses/', supervisors2.getCourses);
 router.get('/courses/:person/', supervisors2.getCoursesByPersonId);
 router.get('/statistics/:course/:date/', supervisors2.getDailyData);
+router.post('/statistics/add/', auth, supervisors2.addStudent);
+router.post('/statistics/remove/', auth, supervisors2.removeStudent);
 
 /**
  * Calendar routes
