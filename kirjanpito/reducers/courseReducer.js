@@ -9,7 +9,13 @@ export const loadCourses = () => async (dispatch) => {
   try {
     const result = await fetch(`${url}/api/courses/`);
     const courses = await result.json();
-    const payload = courses;
+    const courseEditor = courses.map((course) => ({
+      id: course.id,
+      title: course.title,
+      shortTitle: course.shortTitle,
+      selector: false,
+    }));
+    const payload = courseEditor;
 
     dispatch({
       type: 'LOAD_COURSES',

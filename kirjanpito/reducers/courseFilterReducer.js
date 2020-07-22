@@ -1,29 +1,37 @@
+import {
+  getCourseList,
+  removeCourseList,
+  storeCourseList,
+} from '../utils/courseStorage.js';
+
 const initialState = {
-  isFilter: false,
+  filteredList: [],
 };
 
-export const setFilterOn = () => async (dispatch) => {
+export const loadFilteredList = () => async (dispatch) => {
+  let list = [];
+  list = await getCourseList();
   dispatch({
-    type: 'SET_FILTER_ON',
+    type: 'SET_COURSES',
+    payload: list,
   });
 };
 
-export const setFilterOff = () => async (dispatch) => {
+export const setFilteredList = (list) => async (dispatch) => {
+  await removeCourseList();
+  storeCourseList(list);
   dispatch({
-    type: 'SET_FILTER_OFF',
+    type: 'SET_COURSES',
+    payload: list,
   });
 };
 
 const courseFilterReducer = (state = initialState, action) => {
-  const { type } = action;
+  const { type, payload } = action;
   switch (type) {
-    case 'SET_FILTER_ON':
+    case 'SET_COURSES':
       return {
-        isFilter: true,
-      };
-    case 'SET_FILTER_OFF':
-      return {
-        isFilter: false,
+        filteredList: payload,
       };
     default:
       return state;

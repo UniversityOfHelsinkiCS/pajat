@@ -19,13 +19,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setActive } from '../../reducers/studentPanelReducer';
 import { getAccessKey } from '../../utils/authStorage';
 import { loadCourses, setCourseId } from '../../reducers/courseReducer';
+import { getCourseList } from '../../utils/courseStorage.js';
+import { loadFilteredList } from '../../reducers/courseFilterReducer';
 
+// parsing hour interval from time object
 const parseClockTime = (time) => {
   const hour = time.split('T')[1].split(':')[0];
   const clockTime = `klo ${parseInt(hour) - 1} - ${hour}`;
   return clockTime;
 };
 
+// Dropdown selector of React Native Picker Select
 const Dropdown = (props) => {
   return (
     <RNPickerSelect
@@ -39,7 +43,7 @@ const Dropdown = (props) => {
   );
 };
 
-// student statistics item
+// student statistics item for FlatList component
 const ListItem = ({ item, index, courseId, render, setRender }) => {
   const isActive = useSelector((state) => state.panel.active);
   const panelIndex = useSelector((state) => state.panel.index);
@@ -54,7 +58,6 @@ const ListItem = ({ item, index, courseId, render, setRender }) => {
   };
 
   // increase and decrease students amount
-
   const addStudent = async (time, course) => {
     const key = await getAccessKey();
     try {
@@ -141,9 +144,11 @@ const ListItem = ({ item, index, courseId, render, setRender }) => {
   );
 };
 
+// calendar view component
 const CalendarView = () => {
   const courses = useSelector((state) => state.courses.courses);
   const courseId = useSelector((state) => state.courses.courseId);
+  const filteredList = useSelector((state) => state.filteredList.filteredList);
   const dispatch = useDispatch();
 
   const [date, setDate] = useState(new Date());
@@ -152,7 +157,7 @@ const CalendarView = () => {
 
   const [show, setShow] = useState(false);
   const mode = 'date';
-  const [render, setRender] = useState(false);
+  const [render, setRender] = useState(0);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -172,12 +177,18 @@ const CalendarView = () => {
         console.log(e);
       }
     };
-    if (courses.length === 0) {
-      dispatch(loadCourses());
-    }
+    const getCourses = () => {
+      try {
+        dispatch(loadCourses());
+        dispatch(loadFilteredList());
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getCourses();
+
     if (courseId) {
       getStatistics();
-      console.log('render stats');
     }
   }, [date, courseId, render]);
 
@@ -189,7 +200,9 @@ const CalendarView = () => {
 
   const ItemSeparator = () => <View style={styles.separator} />;
 
-  const courseList = courses.map((course) => ({
+  const displayList = filteredList.length > 0 ? filteredList : courses;
+
+  const courseList = displayList.map((course) => ({
     label: course.title,
     value: course.id,
   }));
