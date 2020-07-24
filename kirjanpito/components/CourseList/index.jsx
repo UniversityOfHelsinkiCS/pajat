@@ -1,61 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import {
-  FlatList,
-  View,
-  StyleSheet,
-  Dimensions,
-  Text,
-  Button,
-} from 'react-native';
+import { FlatList, View, StyleSheet, Dimensions, Button } from 'react-native';
 import AppBar from '../AppBar';
-import url from '../../config/url';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadCourses } from '../../reducers/courseReducer';
-import { RadioButton } from 'react-native-paper';
 import {
   setFilterEditor,
   hideFilterEditor,
 } from '../../reducers/filterEditorReducer';
-import {
-  loadFilteredList,
-  setFilteredList,
-} from '../../reducers/courseFilterReducer';
-
-const ListItem = ({ item, addCourse, removeCourse }) => {
-  const editor = useSelector((state) => state.editor.isActive);
-
-  // items state
-  const [selected, setSelected] = useState(false);
-
-  const selectCourse = () => {
-    setSelected(true);
-    addCourse(item);
-  };
-
-  const dropCourse = () => {
-    setSelected(false);
-    removeCourse(item);
-  };
-
-  const buttonTitle = selected ? 'Poista' : 'Valitse';
-  const buttonFunction = selected ? dropCourse : selectCourse;
-
-  const SelectButton = () => (
-    <Button title={buttonTitle} onPress={buttonFunction} />
-  );
-
-  const selector = editor ? <SelectButton /> : <View />;
-
-  return (
-    <View style={selected ? styles.selectedItem : styles.item}>
-      <View style={styles.course}>
-        <Text style={styles.itemTextBold}>{item.title}</Text>
-        <Text style={styles.itemText}>{item.shortTitle}</Text>
-      </View>
-      <View style={styles.selector}>{selector}</View>
-    </View>
-  );
-};
+import { setFilteredList } from '../../reducers/courseFilterReducer';
+import ListItem from './ListItem';
 
 const CourseList = () => {
   const courses = useSelector((state) => state.courses.courses);
@@ -78,6 +31,7 @@ const CourseList = () => {
   };
 
   const saveFilteredList = () => {
+    console.log(editorList);
     dispatch(setFilteredList(editorList));
     dispatch(hideFilterEditor());
   };
