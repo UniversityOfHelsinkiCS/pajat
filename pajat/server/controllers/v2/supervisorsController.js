@@ -12,49 +12,88 @@ const postLogin = async (req, res) => {
   try {
     const { key } = req.body;
     if (!key || key === 'CSDEPT') {
-      return res.sendStatus(403);
+      res.sendStatus(403);
     }
-    const user = await Person.findOne({
+    const existingUser = await Person.findOne({
       where: {
         key,
       },
       raw: true,
     });
-    if (!user) {
+    logger.log('info', {
+      user: existingUser.fullName,
+      action: 'SIGN IN',
+    });
+    // check a google sheet if used key is not in the database
+    if (!existingUser) {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/kävijätilasto!A3:B100?key=${API_KEY}`;
       const values = await fetchValues(url);
       const result = values.find((row) => row[1] === key);
       if (!result) {
-        return res.sendStatus(403);
+        logger.log('error', 'User not found.');
+        res.sendStatus(403);
       }
-      await Person.create({
-        fullName: result[0].split(' (')[0],
-        key: result[1],
-      });
-      const createdUser = await Person.findOne({
+      const name = result[0].split(' (')[0];
+      const user = await Person.findOne({
         where: {
-          key,
+          fullName: name,
         },
         raw: true,
       });
-      return res.send(createdUser);
+      // updating an user info if the key is not in the database but it's in the google sheet
+      if (user) {
+        const updatedUser = await Person.update(
+          { key },
+          {
+            where: {
+              fullName: name,
+            },
+          }
+        );
+        logger.log('info', {
+          user: name,
+          action: 'SIGN IN',
+        });
+        res.send(updatedUser);
+      }
+      // adding user in the database
+      await Person.create({
+        fullName: name,
+        key,
+      });
+      const createdUser = await Person.findOne({
+        where: {
+          fullName: name,
+        },
+        raw: true,
+      });
+      logger.log('info', {
+        user: name,
+        action: 'SIGN IN',
+      });
+      res.send(createdUser);
     }
-    return res.send(user);
+    res.send(existingUser);
   } catch (e) {
-    return res.send(e);
+    logger.log('error', e);
+    res.send(e);
   }
 };
 
 // get authentication
 const getAuthentication = async (req, res) => {
+  const { user } = req;
   try {
-    const { user } = req;
-    logger.info({
+    logger.log('info', {
       user: user.fullName,
       action: 'SIGN IN',
     });
     res.send(user);
   } catch (e) {
+    logger.log('error', e, {
+      user: user.fullName,
+      action: 'SIGN IN',
+    });
     res.send(e);
   }
 };
@@ -75,6 +114,7 @@ const getCourses = async (req, res) => {
       res.send(result);
     } else res.send(existingCourses);
   } catch (e) {
+    logger.log('error', e);
     res.send(e);
   }
 };
@@ -147,18 +187,20 @@ const getDailyData = async (req, res) => {
       res.send(sortedResult);
     } else res.send([]);
   } catch (e) {
+    logger.log('error', e);
     res.send(e);
   }
 };
 
 // add student to the statistics table
 const addStudent = async (req, res) => {
+  const { time, course } = req.body;
   try {
-    const { time, course } = req.body;
-    logger.info({
+    logger.log('info', {
       user: req.user.fullName,
       action: 'ADD STUDENT',
       time,
+      courseId: course,
     });
     const existingStatistic = await Statistic.findOne({
       where: {
@@ -187,14 +229,26 @@ const addStudent = async (req, res) => {
       res.end();
     }
   } catch (e) {
+    logger.log('error', e, {
+      user: req.user.fullName,
+      action: 'ADD STUDENT',
+      time,
+      courseId: course,
+    });
     res.send(e);
   }
 };
 
 // remove student from the statistics table
 const removeStudent = async (req, res) => {
+  const { time, course } = req.body;
   try {
-    const { time, course } = req.body;
+    logger.log('info', {
+      user: req.user.fullName,
+      action: 'REMOVE STUDENT',
+      time,
+      courseId: course,
+    });
     const existingStatistic = await Statistic.findOne({
       where: {
         time,
@@ -217,6 +271,12 @@ const removeStudent = async (req, res) => {
       } else res.end();
     } else res.end();
   } catch (e) {
+    logger.log('error', e, {
+      user: req.user.fullName,
+      action: 'REMOVE STUDENT',
+      time,
+      courseId: course,
+    });
     res.send(e);
   }
 };
