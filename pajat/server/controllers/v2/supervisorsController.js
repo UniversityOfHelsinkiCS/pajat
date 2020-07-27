@@ -5,6 +5,7 @@ const Statistic = require('@models/Statistic');
 const Course = require('@models/Course');
 const { Op } = require('sequelize');
 const { connection } = require('../../util/db');
+const logger = require('../../util/logger');
 
 // login endpoint
 const postLogin = async (req, res) => {
@@ -48,6 +49,10 @@ const postLogin = async (req, res) => {
 const getAuthentication = async (req, res) => {
   try {
     const { user } = req;
+    logger.info({
+      user: user.fullName,
+      action: 'SIGN IN',
+    });
     res.send(user);
   } catch (e) {
     res.send(e);
@@ -86,7 +91,7 @@ const getDailyData = async (req, res) => {
   const date1 = new Date(year, month, day);
   const date2 = new Date(year, month, day + 1);
 
-  const getSortedList = (courseId, courses) => {
+  const getSortedList = (courseId, hours) => {
     const clockTimes = [
       new Date(year, month, day, 10),
       new Date(year, month, day, 11),
@@ -99,14 +104,14 @@ const getDailyData = async (req, res) => {
       new Date(year, month, day, 18),
       new Date(year, month, day, 19),
     ];
-    if (courses.length > 0) {
+    if (hours.length > 0) {
       const data = [];
       clockTimes.forEach((clockTime) => {
         const findTime = (element, clockTime) => {
           const value = element.time.getTime() === clockTime.getTime();
           return value;
         };
-        const value = courses.find((element) => findTime(element, clockTime));
+        const value = hours.find((element) => findTime(element, clockTime));
         if (value) {
           data.push(value);
         } else {
@@ -150,6 +155,11 @@ const getDailyData = async (req, res) => {
 const addStudent = async (req, res) => {
   try {
     const { time, course } = req.body;
+    logger.info({
+      user: req.user.fullName,
+      action: 'ADD STUDENT',
+      time,
+    });
     const existingStatistic = await Statistic.findOne({
       where: {
         time,
