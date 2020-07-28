@@ -10,6 +10,8 @@ import { AntDesign } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActive } from '../../reducers/studentPanelReducer';
 import { getAccessKey } from '../../utils/authStorage';
+import url from '../../config/url';
+import * as Sentry from '@sentry/react-native';
 
 // parsing hour interval from time object
 const parseClockTime = (time) => {
@@ -19,9 +21,10 @@ const parseClockTime = (time) => {
 };
 
 // student statistics item for FlatList component
-const ListItem = ({ item, index, courseId, render, setRender }) => {
+const ListItem = ({ item, index, render, setRender }) => {
   const isActive = useSelector((state) => state.panel.active);
   const panelIndex = useSelector((state) => state.panel.index);
+  const courseId = useSelector((state) => state.courses.courseId);
   const dispatch = useDispatch();
 
   const setActivePanel = (index) => {
@@ -52,7 +55,7 @@ const ListItem = ({ item, index, courseId, render, setRender }) => {
         renderPage();
       }
     } catch (e) {
-      console.log(e);
+      Sentry.captureException(e);
     }
   };
 
@@ -75,7 +78,7 @@ const ListItem = ({ item, index, courseId, render, setRender }) => {
         renderPage();
       }
     } catch (e) {
-      console.log(e);
+      Sentry.captureException(e);
     }
   };
 

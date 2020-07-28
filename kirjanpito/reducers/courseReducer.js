@@ -1,4 +1,5 @@
 import url from '../config/url';
+import * as Sentry from '@sentry/react-native';
 
 const initialState = {
   courses: [],
@@ -16,12 +17,12 @@ export const loadCourses = () => async (dispatch) => {
       selector: false,
     }));
     const payload = courseEditor;
-
     dispatch({
       type: 'LOAD_COURSES',
       payload,
     });
   } catch (e) {
+    Sentry.captureException(e);
     dispatch({
       type: 'LOADING_FAIL',
     });
@@ -35,7 +36,7 @@ export const setCourseId = (id) => (dispatch) => {
       payload: id,
     });
   } catch (e) {
-    console.log(e);
+    Sentry.captureException(e);
   }
 };
 
@@ -44,8 +45,8 @@ const courseReducer = (state = initialState, action) => {
   switch (type) {
     case 'LOAD_COURSES':
       return {
+        ...state,
         courses: payload,
-        courseId: null,
       };
     case 'SET_COURSE_ID':
       return {

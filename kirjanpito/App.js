@@ -10,8 +10,15 @@ import { Provider, useDispatch, useSelector } from 'react-redux';
 import Main from './components/Main';
 import Login from './components/Login';
 import store from './store';
-import AppBar from './components/AppBar';
 import { loadUser } from './reducers/loginReducer';
+import * as Sentry from 'sentry-expo';
+
+Sentry.init({
+  dsn:
+    'https://f0ca387254fb4623b5623f8f615c276f@sentry.toska.cs.helsinki.fi/16',
+  enableInExpoDevelopment: true,
+  debug: true,
+});
 
 const LoadingScreen = () => {
   return <View style={styles.container}></View>;

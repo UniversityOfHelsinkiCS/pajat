@@ -14,6 +14,7 @@ import { logOut } from '../../reducers/loginReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import theme from '../../theme.js';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Sentry from '@sentry/react-native';
 
 const Drawer = createDrawerNavigator();
 

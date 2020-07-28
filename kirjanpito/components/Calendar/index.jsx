@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadCourses, setCourseId } from '../../reducers/courseReducer';
 import { loadFilteredList } from '../../reducers/courseFilterReducer';
 import ListItem from './ListItem';
+import * as Sentry from '@sentry/react-native';
 
 // parsing hour interval from Date object
 const parseClockTime = (time) => {
@@ -72,7 +73,7 @@ const CalendarView = () => {
         let json = await result.json();
         setStatistics(json);
       } catch (e) {
-        console.log(e);
+        Sentry.captureException(e);
       }
     };
     const getCourses = () => {
@@ -97,7 +98,7 @@ const CalendarView = () => {
 
   const ItemSeparator = () => <View style={styles.separator} />;
 
-  const displayList = filteredList.length > 0 ? filteredList : courses;
+  const displayList = filteredList[0] ? filteredList : courses;
 
   const courseList = displayList.map((course) => ({
     label: course.title,
@@ -150,7 +151,6 @@ const CalendarView = () => {
           <ListItem
             item={item}
             index={index}
-            courseId={courseId}
             render={render}
             setRender={setRender}
           />

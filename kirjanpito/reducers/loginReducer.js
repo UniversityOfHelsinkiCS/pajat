@@ -3,7 +3,7 @@ import {
   getAccessKey,
   removeAccessKey,
 } from '../utils/authStorage';
-
+import * as Sentry from '@sentry/react-native';
 import url from '../config/url';
 
 const initialState = {
@@ -31,9 +31,11 @@ export const signIn = (key) => async (dispatch) => {
         type: 'LOGIN_SUCCESS',
         payload: json,
       });
+    } else {
+      Sentry.captureMessage('Authentication failed.');
     }
   } catch (e) {
-    console.log(e);
+    Sentry.captureException(e);
     dispatch({
       type: 'LOGIN_FAIL',
     });
@@ -60,6 +62,7 @@ export const loadUser = () => async (dispatch) => {
         });
       } else {
         removeAccessKey();
+        Sentry.captureMessage('Authentication failed.');
         dispatch({
           type: 'LOGIN_FAIL',
         });
@@ -70,7 +73,7 @@ export const loadUser = () => async (dispatch) => {
       });
     }
   } catch (e) {
-    console.log(e);
+    Sentry.captureException(e);
     dispatch({
       type: 'LOGIN_FAIL',
     });

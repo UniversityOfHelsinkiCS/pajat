@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Ohjauskirjanpito",
-    "slug": "kirjanpito",
+    "slug": "HY-pajat",
     "platforms": ["ios", "android", "web"],
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,6 +17,18 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "sentry",
+            "project": "pajat",
+            "authToken": "5f95177e4d724cb9b848510535398832e27da1d03d1f49cdabac00ead7c456c2"
+          }
+        }
+      ]
     }
   }
 }
