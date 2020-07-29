@@ -1,4 +1,5 @@
 const Person = require('@models/Person');
+const logger = require('../util/logger');
 
 const auth = async (req, res, next) => {
   const key = req.header('x-access-key');
@@ -12,6 +13,7 @@ const auth = async (req, res, next) => {
     }
     return next();
   } catch (e) {
+    logger.log('error', e);
     res.send(e);
   }
 };
