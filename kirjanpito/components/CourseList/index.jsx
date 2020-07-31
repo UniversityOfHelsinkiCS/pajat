@@ -4,15 +4,17 @@ import AppBar from '../AppBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadCourses } from '../../reducers/courseReducer';
 import {
+  setFilteredList,
+  loadFilteredList,
   setFilterEditor,
   hideFilterEditor,
-} from '../../reducers/filterEditorReducer';
-import { setFilteredList } from '../../reducers/courseFilterReducer';
+} from '../../reducers/courseFilterReducer';
 import ListItem from './ListItem';
 
 const CourseList = () => {
   const courses = useSelector((state) => state.courses.courses);
-  const editor = useSelector((state) => state.editor.isActive);
+  const editor = useSelector((state) => state.filter.isActive);
+  const filteredList = useSelector((state) => state.filter.filteredList);
   const dispatch = useDispatch();
 
   const [editorList, setEditorList] = useState([]);
@@ -31,7 +33,6 @@ const CourseList = () => {
   };
 
   const saveFilteredList = () => {
-    console.log(editorList);
     dispatch(setFilteredList(editorList));
     dispatch(hideFilterEditor());
   };
@@ -55,6 +56,7 @@ const CourseList = () => {
     if (courses.length === 0) {
       dispatch(loadCourses());
     }
+    dispatch(loadFilteredList());
   }, []);
 
   const ItemSeparator = () => <View style={styles.separator} />;
@@ -71,6 +73,7 @@ const CourseList = () => {
             item={item}
             addCourse={addCourse}
             removeCourse={removeCourse}
+            filteredList={filteredList}
           />
         )}
         ItemSeparatorComponent={ItemSeparator}

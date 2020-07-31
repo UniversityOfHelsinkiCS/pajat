@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, Button, Dimensions, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 
-const ListItem = ({ item, addCourse, removeCourse }) => {
-  const editor = useSelector((state) => state.editor.isActive);
-
-  const [selected, setSelected] = useState(false);
+const ListItem = ({ item, addCourse, removeCourse, filteredList }) => {
+  const editor = useSelector((state) => state.filter.isActive);
+  const idList = filteredList.map((item) => item.id);
+  const initialSelectorValue = idList.includes(item.id);
+  const [selected, setSelected] = useState(initialSelectorValue);
 
   const selectCourse = () => {
     setSelected(true);
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: 60,
     width: window.width,
-    backgroundColor: 'white',
+    backgroundColor: '#86929e',
     alignItems: 'center',
     flexDirection: 'row',
   },
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: 60,
     width: window.width,
-    backgroundColor: '#86929e',
+    backgroundColor: 'white',
     alignItems: 'center',
     flexDirection: 'row',
   },

@@ -44,7 +44,7 @@ const Dropdown = (props) => {
 const CalendarView = () => {
   const courses = useSelector((state) => state.courses.courses);
   const courseId = useSelector((state) => state.courses.courseId);
-  const filteredList = useSelector((state) => state.filteredList.filteredList);
+  const filteredList = useSelector((state) => state.filter.filteredList);
   const dispatch = useDispatch();
 
   const [date, setDate] = useState(new Date());
@@ -81,7 +81,7 @@ const CalendarView = () => {
         dispatch(loadCourses());
         dispatch(loadFilteredList());
       } catch (e) {
-        console.log(e);
+        Sentry.captureException(e);
       }
     };
     getCourses();

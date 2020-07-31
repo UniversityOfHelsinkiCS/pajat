@@ -42,14 +42,21 @@ const postLogin = async (req, res) => {
       });
       // updating an user info if the key is not in the database but it's in the google sheet
       if (user) {
-        const updatedUser = await Person.update(
+        await Person.update(
           { key },
           {
             where: {
               fullName: name,
             },
+            raw: true,
           }
         );
+        const updatedUser = await Person.findOne({
+          where: {
+            fullName: name,
+          },
+          raw: true,
+        });
         logger.log('info', 'sign in', {
           user: name,
           action: 'SIGN IN',
@@ -191,10 +198,11 @@ const getDailyData = async (req, res) => {
 
 // add student to the statistics table
 const addStudent = async (req, res) => {
+  const { user } = req;
   const { time, course } = req.body;
   try {
     logger.log('info', 'add student', {
-      user: req.user.fullName,
+      user: user.fullName,
       action: 'ADD STUDENT',
       time,
       courseId: course,
@@ -238,10 +246,11 @@ const addStudent = async (req, res) => {
 
 // remove student from the statistics table
 const removeStudent = async (req, res) => {
+  const { user } = req;
   const { time, course } = req.body;
   try {
     logger.log('info', 'remove student', {
-      user: req.user.fullName,
+      user: user.fullName,
       action: 'REMOVE STUDENT',
       time,
       courseId: course,

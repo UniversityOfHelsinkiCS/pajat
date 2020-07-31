@@ -6,6 +6,19 @@ import {
 
 const initialState = {
   filteredList: [],
+  isActive: false,
+};
+
+export const setFilterEditor = () => async (dispatch) => {
+  dispatch({
+    type: 'SET_FILTER_EDITOR',
+  });
+};
+
+export const hideFilterEditor = () => async (dispatch) => {
+  dispatch({
+    type: 'HIDE_FILTER_EDITOR',
+  });
 };
 
 export const loadFilteredList = () => async (dispatch) => {
@@ -32,6 +45,16 @@ const courseFilterReducer = (state = initialState, action) => {
     case 'SET_COURSES':
       return {
         filteredList: payload,
+      };
+    case 'SET_FILTER_EDITOR':
+      return {
+        ...state,
+        isActive: true,
+      };
+    case 'HIDE_FILTER_EDITOR':
+      return {
+        ...state,
+        isActive: false,
       };
     default:
       return state;
