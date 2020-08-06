@@ -33,8 +33,6 @@ if (inProduction) {
   logger.add(new Sentry(options));
 }
 
-logger.add(new Sentry(options));
-
 if (!inProduction) {
   logger.add(
     new winston.transports.Console({
