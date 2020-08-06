@@ -44,6 +44,7 @@ const courseFilterReducer = (state = initialState, action) => {
   switch (type) {
     case 'SET_COURSES':
       return {
+        ...state,
         filteredList: payload,
       };
     case 'SET_FILTER_EDITOR':

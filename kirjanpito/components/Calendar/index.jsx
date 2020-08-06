@@ -14,7 +14,7 @@ import theme from '../../theme';
 import AppBar from '../AppBar';
 import url from '../../config/url';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadCourses, setCourseId } from '../../reducers/courseReducer';
+import { loadCourses, setSelectedCourse } from '../../reducers/courseReducer';
 import { loadFilteredList } from '../../reducers/courseFilterReducer';
 import ListItem from './ListItem';
 import * as Sentry from '@sentry/react-native';
@@ -43,7 +43,7 @@ const Dropdown = (props) => {
 // calendar view component
 const CalendarView = () => {
   const courses = useSelector((state) => state.courses.courses);
-  const courseId = useSelector((state) => state.courses.courseId);
+  const selectedCourse = useSelector((state) => state.courses.selectedCourse);
   const filteredList = useSelector((state) => state.filter.filteredList);
   const dispatch = useDispatch();
 
@@ -61,12 +61,18 @@ const CalendarView = () => {
     setDate(currentDate);
   };
 
-  // dummy state for forcing useEffect hook to run after inserting students data to database
-  const [render, setRender] = useState(0);
+  /*   
+  Function for forcing useEffect hook to run. This function is used when 
+  inserting students data to database */
+  const [pageLoader, setPageLoader] = useState(0);
+  const loadPage = () => {
+    setPageLoader(pageLoader + 1);
+  };
 
   useEffect(() => {
     const getStatistics = async () => {
       try {
+        const courseId = selectedCourse ? selectedCourse.id : null;
         const result = await fetch(
           `${url}/api/statistics/${courseId}/${parsedDate}/`
         );
@@ -85,14 +91,14 @@ const CalendarView = () => {
       }
     };
     getCourses();
-    if (courseId) {
+    if (selectedCourse) {
       getStatistics();
     }
-  }, [date, courseId, render]);
+  }, [date, selectedCourse, pageLoader]);
 
   const changeCourse = (value) => {
     if (value) {
-      dispatch(setCourseId(value));
+      dispatch(setSelectedCourse(value));
     }
   };
 
@@ -102,7 +108,7 @@ const CalendarView = () => {
 
   const courseList = displayList.map((course) => ({
     label: course.title,
-    value: course.id,
+    value: course,
   }));
 
   const days = ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La'];
@@ -110,6 +116,15 @@ const CalendarView = () => {
   const dateTitle = `${days[date.getDay()]} ${date.toLocaleDateString(
     'fi-FI'
   )}`;
+
+  // title of selected course if needed
+  const selectedTitle = selectedCourse ? selectedCourse.title : '';
+
+  /*   const courseTitle = (
+    <View style={styles.courseTitle}>
+      <Text>{selectedTitle}</Text>
+    </View>
+  ); */
 
   return (
     <View style={styles.container}>
@@ -148,12 +163,7 @@ const CalendarView = () => {
         data={statistics}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
-          <ListItem
-            item={item}
-            index={index}
-            render={render}
-            setRender={setRender}
-          />
+          <ListItem item={item} index={index} loadPage={loadPage} />
         )}
         ItemSeparatorComponent={ItemSeparator}
       />
@@ -176,6 +186,13 @@ const styles = StyleSheet.create({
   },
   infoText: {
     marginLeft: 4,
+  },
+  courseTitle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 40,
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
   },
   drop: {
     backgroundColor: 'white',

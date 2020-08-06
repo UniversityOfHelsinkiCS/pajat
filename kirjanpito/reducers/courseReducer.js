@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/react-native';
 
 const initialState = {
   courses: [],
-  courseId: null,
+  selectedCourse: null,
 };
 
 export const loadCourses = () => async (dispatch) => {
@@ -29,11 +29,11 @@ export const loadCourses = () => async (dispatch) => {
   }
 };
 
-export const setCourseId = (id) => (dispatch) => {
+export const setSelectedCourse = (course) => (dispatch) => {
   try {
     dispatch({
-      type: 'SET_COURSE_ID',
-      payload: id,
+      type: 'SET_COURSE',
+      payload: course,
     });
   } catch (e) {
     Sentry.captureException(e);
@@ -48,10 +48,10 @@ const courseReducer = (state = initialState, action) => {
         ...state,
         courses: payload,
       };
-    case 'SET_COURSE_ID':
+    case 'SET_COURSE':
       return {
         ...state,
-        courseId: payload,
+        selectedCourse: payload,
       };
     case 'LOADING_FAIL':
       return state;

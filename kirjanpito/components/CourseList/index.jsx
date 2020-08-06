@@ -10,6 +10,7 @@ import {
   hideFilterEditor,
 } from '../../reducers/courseFilterReducer';
 import ListItem from './ListItem';
+import { getCourseList, removeCourseList } from '../../utils/courseStorage';
 
 const CourseList = () => {
   const courses = useSelector((state) => state.courses.courses);
@@ -18,6 +19,11 @@ const CourseList = () => {
   const dispatch = useDispatch();
 
   const [editorList, setEditorList] = useState([]);
+
+  const resetFilter = () => {
+    removeCourseList();
+    setFilteredList([]);
+  };
 
   const addCourse = async (course) => {
     const isListed = await editorList.find((item) => item.id === course.id);
@@ -37,13 +43,14 @@ const CourseList = () => {
     dispatch(hideFilterEditor());
   };
 
+  const editFilterList = async () => {
+    const list = await getCourseList();
+    setEditorList(list);
+    dispatch(setFilterEditor());
+  };
+
   const EditButton = () => {
-    return (
-      <Button
-        title='Muokkaa filtteriä'
-        onPress={() => dispatch(setFilterEditor())}
-      />
-    );
+    return <Button title='Muokkaa filtteriä' onPress={editFilterList} />;
   };
 
   const SaveButton = () => {

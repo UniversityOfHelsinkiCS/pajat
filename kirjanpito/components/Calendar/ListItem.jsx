@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   TouchableOpacity,
   View,
@@ -10,6 +10,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActive } from '../../reducers/studentPanelReducer';
 import { getAccessKey } from '../../utils/authStorage';
+import { loadStatistics } from '../../reducers/statisticsReducer';
 import url from '../../config/url';
 import * as Sentry from '@sentry/react-native';
 
@@ -21,25 +22,21 @@ const parseClockTime = (time) => {
 };
 
 // student statistics item for FlatList component
-const ListItem = ({ item, index, render, setRender }) => {
+const ListItem = ({ item, index, loadPage }) => {
   const isActive = useSelector((state) => state.panel.active);
   const panelIndex = useSelector((state) => state.panel.index);
-  const courseId = useSelector((state) => state.courses.courseId);
+  const selectedCourse = useSelector((state) => state.courses.selectedCourse);
   const dispatch = useDispatch();
 
   const setActivePanel = (index) => {
     dispatch(setActive(index));
   };
 
-  const renderPage = () => {
-    setRender(render + 1);
-  };
-
   // increase and decrease students amount
-  const addStudent = async (time, course) => {
+  const addStudent = async (time, courseId) => {
     const key = await getAccessKey();
     try {
-      if (time && course) {
+      if (time && selectedCourse) {
         const path = `${url}/api/statistics/add/`;
         const response = await fetch(path, {
           method: 'POST',
@@ -49,20 +46,20 @@ const ListItem = ({ item, index, render, setRender }) => {
           },
           body: JSON.stringify({
             time,
-            course,
+            course: courseId,
           }),
         });
-        renderPage();
+        loadPage();
       }
     } catch (e) {
       Sentry.captureException(e);
     }
   };
 
-  const removeStudent = async (time, course) => {
+  const removeStudent = async (time, courseId) => {
     const key = await getAccessKey();
     try {
-      if (time && course) {
+      if (time && selectedCourse) {
         const path = `${url}/api/statistics/remove/`;
         const response = await fetch(path, {
           method: 'POST',
@@ -72,10 +69,10 @@ const ListItem = ({ item, index, render, setRender }) => {
           },
           body: JSON.stringify({
             time,
-            course,
+            course: courseId,
           }),
         });
-        renderPage();
+        loadPage();
       }
     } catch (e) {
       Sentry.captureException(e);
@@ -92,7 +89,9 @@ const ListItem = ({ item, index, render, setRender }) => {
   // active students panel
   const activePanel = (
     <View style={styles.students}>
-      <TouchableOpacity onPress={() => removeStudent(item.time, courseId)}>
+      <TouchableOpacity
+        onPress={() => removeStudent(item.time, selectedCourse.id)}
+      >
         <View style={styles.leftIcon}>
           <AntDesign name='minussquareo' size={40} color='black' />
         </View>
@@ -100,7 +99,9 @@ const ListItem = ({ item, index, render, setRender }) => {
       <View style={styles.number}>
         <Text>{item.students}</Text>
       </View>
-      <TouchableOpacity onPress={() => addStudent(item.time, courseId)}>
+      <TouchableOpacity
+        onPress={() => addStudent(item.time, selectedCourse.id)}
+      >
         <View style={styles.rightIcon}>
           <AntDesign name='plussquareo' size={40} color='black' />
         </View>

@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Button, Dimensions, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import { useSelector } from 'react-redux';
 
 const ListItem = ({ item, addCourse, removeCourse, filteredList }) => {
@@ -28,12 +35,14 @@ const ListItem = ({ item, addCourse, removeCourse, filteredList }) => {
   const selector = editor ? <SelectButton /> : <View />;
 
   return (
-    <View style={selected ? styles.selectedItem : styles.item}>
-      <View style={styles.course}>
-        <Text style={styles.itemTextBold}>{item.title}</Text>
-        <Text style={styles.itemText}>{item.shortTitle}</Text>
+    <View>
+      <View style={selected ? styles.selectedItem : styles.item}>
+        <View style={styles.course}>
+          <Text style={styles.itemTextBold}>{item.title}</Text>
+          <Text style={styles.itemText}>{item.shortTitle}</Text>
+        </View>
+        <View style={styles.selector}>{selector}</View>
       </View>
-      <View style={styles.selector}>{selector}</View>
     </View>
   );
 };
