@@ -117,7 +117,7 @@ const CalendarView = () => {
     'fi-FI'
   )}`;
 
-  // title of selected course if needed
+  // title of selected course
   const selectedTitle = selectedCourse ? selectedCourse.title : '';
 
   /*   const courseTitle = (
