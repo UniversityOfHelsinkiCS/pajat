@@ -93,12 +93,16 @@ const CalendarView = () => {
     getCourses();
     if (selectedCourse) {
       getStatistics();
+    } else {
+      setStatistics([]);
     }
   }, [date, selectedCourse, pageLoader]);
 
   const changeCourse = (value) => {
     if (value) {
       dispatch(setSelectedCourse(value));
+    } else if (value === '') {
+      dispatch(setSelectedCourse(null));
     }
   };
 
