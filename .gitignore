@@ -1,0 +1,13 @@
+node_modules
+dist
+build
+stats.json
+*.log
+.env
+.DS_Store
+backups
+scripts/my_username
+.vscode
+*.mp4
+cypress/screenshots
+cypress/videos
