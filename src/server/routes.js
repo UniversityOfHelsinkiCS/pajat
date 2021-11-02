@@ -14,8 +14,26 @@ router.use(shibbolethCharsetMiddleware);
 router.use(getAuthorizedUser);
 router.use(accessLogger);
 
-router.get('/login', controllers.getAuthorizedUser);
 router.get('/logout', controllers.logout);
+
+router.get('/users/me', controllers.getAuthorizedUser);
+
+router.put('/users/me/competence-courses', controllers.updateCompetenceCourses);
+
+router.get(
+  '/users/me/instruction-sessions',
+  controllers.getMyInstructionSessions,
+);
+
+router.get('/courses', controllers.getCourses);
+router.post('/courses', controllers.createCourse);
+
+router.post('/instruction-sessions', controllers.createInsturctionSession);
+
+router.delete(
+  '/instruction-sessions/:id',
+  controllers.deleteInstructionSession,
+);
 
 router.use(errorHandler);
 

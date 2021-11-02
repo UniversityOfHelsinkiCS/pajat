@@ -15,7 +15,8 @@
     "format": "prettier --write 'src/**/*.js'",
     "lint": "eslint 'src/**/*.js'",
     "prepare": "husky install",
-    "migrate:make": "knex migrate:make --knexfile ./src/server/knexfile.js --"
+    "migrate:make": "knex migrate:make --knexfile ./src/server/knexfile.js --",
+    "migrate:rollback": "knex migrate:rollback --knexfile ./src/server/knexfile.js --"
   },
   "lint-staged": {
     "src/**/*.js": "eslint",
@@ -30,8 +31,10 @@
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@mui/icons-material": "^5.0.5",
+    "@mui/lab": "^5.0.0-alpha.53",
     "@mui/material": "^5.0.6",
     "axios": "^0.24.0",
+    "date-fns": "^2.25.0",
     "dotenv": "^10.0.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.3.0",
@@ -39,9 +42,11 @@
     "eslint-plugin-prettier": "^4.0.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
+    "formik": "^2.2.9",
     "husky": "^7.0.4",
     "knex": "^0.21.21",
     "lint-staged": "^11.2.6",
+    "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "notistack": "^2.0.3",
     "objection": "^2.2.17",

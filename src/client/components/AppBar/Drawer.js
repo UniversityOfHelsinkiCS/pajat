@@ -17,6 +17,11 @@ const LinkList = styled(List)`
 const Drawer = ({ authorizedUser, open, onClose }) => {
   const links = [
     { label: 'Sessions', to: '/' },
+    { label: 'Courses', to: '/courses' },
+    authorizedUser.instructorAccess && {
+      label: 'My sessions',
+      to: '/my-sessions',
+    },
     authorizedUser.instructorAccess && { label: 'My profile', to: '/profile' },
   ].filter(Boolean);
 

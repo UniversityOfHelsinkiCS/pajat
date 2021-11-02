@@ -1,5 +1,4 @@
-import { useQuery } from 'react-query';
-
+import useQuery from './useQuery';
 import apiClient from '../utils/apiClient';
 
 const useAuthorizedUser = (options = {}) => {
@@ -8,7 +7,7 @@ const useAuthorizedUser = (options = {}) => {
   const { data: authorizedUser, ...rest } = useQuery(
     queryKey,
     async () => {
-      const { data } = await apiClient.get('/login');
+      const { data } = await apiClient.get('/users/me');
 
       return data;
     },
