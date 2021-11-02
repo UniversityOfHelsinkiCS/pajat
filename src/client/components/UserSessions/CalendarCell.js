@@ -72,6 +72,7 @@ const CalendarCell = ({ date, hour, onNew, onDelete, instructionSessions }) => {
         session={session}
         disabled={disabled}
         onDelete={onDelete}
+        focusRipple
       />
     );
   }

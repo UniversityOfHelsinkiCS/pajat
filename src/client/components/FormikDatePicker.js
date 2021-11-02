@@ -14,7 +14,6 @@ const FormikDatePicker = ({ name, fullWidth, ...props }) => {
       onChange={(value) => {
         helpers.setValue(value);
       }}
-      onBlur={() => helpers.setTouched(true)}
       renderInput={(textFieldProps) => (
         <TextField
           {...textFieldProps}

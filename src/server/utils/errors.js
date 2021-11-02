@@ -23,33 +23,32 @@ class ApplicationError extends Error {
 
 class NotFoundError extends ApplicationError {
   constructor(message, properties) {
-    super(message ?? 'Not found', properties);
-
-    this.status = 404;
+    super(message ?? 'Not found', 404, properties);
   }
 }
 
 class UserInputError extends ApplicationError {
   constructor(message, properties) {
-    super(message ?? 'Bad input', properties);
+    super(message ?? 'Bad input', 400, properties);
+  }
 
-    this.status = 400;
+  static fromValidationError(error) {
+    return new UserInputError(error.message, {
+      path: error.path,
+      errors: error.errors,
+    });
   }
 }
 
 class AuthorizationError extends ApplicationError {
   constructor(message, properties) {
-    super(message ?? 'Authorization is required', properties);
-
-    this.status = 401;
+    super(message ?? 'Authorization is required', 401, properties);
   }
 }
 
 class ForbiddenError extends ApplicationError {
   constructor(message, properties) {
-    super(message ?? 'Action is forbidded', properties);
-
-    this.status = 403;
+    super(message ?? 'Action is forbidded', 403, properties);
   }
 }
 

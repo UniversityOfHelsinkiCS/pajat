@@ -1,10 +1,22 @@
+const yup = require('yup');
+
 const { InstructionSession } = require('../models');
 const { ForbiddenError } = require('../utils/errors');
 
-const createInstructionSession = async (req, res) => {
-  const { user, body } = req;
+const hourSchema = yup.number().min(0).max(23);
 
-  const { startHour, endHour, sessionDate } = body;
+const bodySchema = yup.object().shape({
+  startHour: hourSchema.required(),
+  endHour: hourSchema.required(),
+  sessionDate: yup.date().required(),
+});
+
+const createInstructionSession = async (req, res) => {
+  const { user } = req;
+
+  const { startHour, endHour, sessionDate } = await bodySchema.validate(
+    req.body,
+  );
 
   if (!user.hasInstructorAccess()) {
     throw new ForbiddenError('Instructor access is required');

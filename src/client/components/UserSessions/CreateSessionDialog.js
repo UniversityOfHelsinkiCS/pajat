@@ -12,12 +12,13 @@ import {
 import { Formik } from 'formik';
 
 import CreateSessionForm from './CreateSessionForm';
+import { validate } from './utils';
 
 const CreateSessionDialog = ({ open, onClose, initialValues, onSubmit }) => (
   <Formik
     onSubmit={onSubmit}
     initialValues={initialValues}
-    validateOnChange={false}
+    validate={validate}
     enableReinitialize
   >
     {({ handleSubmit }) => (

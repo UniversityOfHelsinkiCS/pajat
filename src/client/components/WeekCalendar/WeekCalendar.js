@@ -46,6 +46,7 @@ const DayCell = styled.th`
   padding: ${({ theme }) => theme.spacing(2, 4)};
   font-weight: ${({ theme }) => theme.typography.fontWeightMedium};
   white-space: nowrap;
+  border-bottom: 3px solid transparent;
 
   ${({ isToday, theme }) =>
     isToday &&
@@ -66,7 +67,7 @@ const WeekCalendar = ({
   minHour = 8,
   maxHour = 19,
   firstDate,
-  numberOfDates = 7,
+  numberOfDates = 5,
   renderCell = () => null,
   onPreviousWeek = () => {},
   onNextWeek = () => {},
@@ -94,8 +95,8 @@ const WeekCalendar = ({
         </Box>
 
         <Typography flexGrow={1} variant="h6" align="center">
-          {formatDate(firstWeekDate, 'd.M.')} -{' '}
-          {formatDate(lastWeekDate, 'd.M.')}
+          {formatDate(firstWeekDate, 'dd.MM.')} -{' '}
+          {formatDate(lastWeekDate, 'dd.MM.')}
         </Typography>
 
         <Box flexGrow={0}>
@@ -113,7 +114,7 @@ const WeekCalendar = ({
             <tr>
               <th aria-hidden="true" />
               {weekDates.map((date) => {
-                const formattedDate = formatDate(date, 'EE d.M.');
+                const formattedDate = formatDate(date, 'EE dd.MM.');
 
                 return (
                   <DayCell isToday={dateIsToday(date)} key={formattedDate}>

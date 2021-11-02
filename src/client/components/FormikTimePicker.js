@@ -15,13 +15,14 @@ const FormikTimePicker = ({ name, fullWidth, ...props }) => {
       value={field.value ?? ''}
       onChange={(value) => {
         helpers.setValue(value);
+        helpers.setTouched(true);
       }}
-      onBlur={() => helpers.setTouched(true)}
       renderInput={(textFieldProps) => (
         <TextField
           {...textFieldProps}
           error={showError}
           helperText={showError ? meta.error : ''}
+          onBlur={() => helpers.setTouched(true)}
           fullWidth={fullWidth}
         />
       )}

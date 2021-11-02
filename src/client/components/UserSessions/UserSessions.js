@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
 import { Typography, Card, CardContent } from '@mui/material';
-
-import {
-  set as setDate,
-  format as formatDate,
-  addDays,
-  startOfWeek,
-  getHours,
-} from 'date-fns';
-
 import { useSnackbar } from 'notistack';
 
 import WeekCalendar from '../WeekCalendar';
@@ -18,10 +9,24 @@ import CalendarCell from './CalendarCell';
 import useMyInstructionSessions from '../../hooks/useMyInstructionSessions';
 import useDeleteInstructionSession from '../../hooks/useDeleteInstructionSession';
 
-const getMondayOfWeek = (date) => addDays(startOfWeek(date), 1);
+import {
+  getInitialValues,
+  getPreviousMonday,
+  getNextMonday,
+  getCurrentMonday,
+  getInstructionSessionFromValues,
+  getQueryOptions,
+} from './utils';
 
 const UserSessions = () => {
-  const { instructionSessions, refetch } = useMyInstructionSessions();
+  const [firstDate, setFirstDate] = useState(() =>
+    getCurrentMonday(new Date()),
+  );
+
+  const { instructionSessions, refetch } = useMyInstructionSessions(
+    getQueryOptions(firstDate),
+  );
+
   const { enqueueSnackbar } = useSnackbar();
 
   const { mutateAsync: createInstructionSession } =
@@ -33,21 +38,7 @@ const UserSessions = () => {
   const [selectedTime, setSelectedTime] = useState({ date: null, hour: null });
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const initialValues = {
-    sessionDate: selectedTime.date,
-    startTime: selectedTime.date
-      ? setDate(selectedTime.date, {
-          hours: selectedTime.hour,
-          minutes: 0,
-        })
-      : null,
-    endTime: selectedTime.date
-      ? setDate(selectedTime.date, {
-          hours: selectedTime.hour + 1,
-          minutes: 0,
-        })
-      : null,
-  };
+  const initialValues = getInitialValues(selectedTime.date, selectedTime.hour);
 
   const handleNewSession = (date, hour) => {
     setSelectedTime({ date, hour });
@@ -65,18 +56,10 @@ const UserSessions = () => {
   };
 
   const onSubmit = async (values) => {
-    const { sessionDate, startTime, endTime } = values;
-
-    const startHour = getHours(startTime);
-    const endHour = getHours(endTime);
-    const normalizedSessionDate = formatDate(sessionDate, 'yyyy-MM-dd');
+    const session = getInstructionSessionFromValues(values);
 
     try {
-      await createInstructionSession({
-        sessionDate: normalizedSessionDate,
-        startHour,
-        endHour,
-      });
+      await createInstructionSession(session);
 
       refetch();
       setDialogOpen(false);
@@ -96,7 +79,11 @@ const UserSessions = () => {
       <Card>
         <CardContent>
           <WeekCalendar
-            firstDate={getMondayOfWeek(new Date())}
+            firstDate={firstDate}
+            onNextWeek={() => setFirstDate((date) => getNextMonday(date))}
+            onPreviousWeek={() =>
+              setFirstDate((date) => getPreviousMonday(date))
+            }
             renderCell={(date, hour) => (
               <CalendarCell
                 date={date}

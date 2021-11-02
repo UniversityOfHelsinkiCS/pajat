@@ -7,7 +7,12 @@ import FormikTimePicker from '../FormikTimePicker';
 const CreateSessionForm = () => (
   <>
     <Box mb={2}>
-      <FormikDatePicker name="sessionDate" label="Date" fullWidth />
+      <FormikDatePicker
+        name="sessionDate"
+        label="Date"
+        minDate={new Date()}
+        fullWidth
+      />
     </Box>
 
     <Grid spacing={2} container>
@@ -16,6 +21,8 @@ const CreateSessionForm = () => (
           name="startTime"
           label="Start time"
           views={['hours']}
+          inputFormat="HH"
+          mask="__"
           fullWidth
         />
       </Grid>
@@ -24,6 +31,8 @@ const CreateSessionForm = () => (
           name="endTime"
           label="End time"
           views={['hours']}
+          inputFormat="HH"
+          mask="__"
           fullWidth
         />
       </Grid>
