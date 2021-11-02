@@ -6,6 +6,7 @@ const updateCompetenceCourses = require('./updateCompetenceCourses');
 const createInsturctionSession = require('./createInstructionSession');
 const getMyInstructionSessions = require('./getMyInstructionSessions');
 const deleteInstructionSession = require('./deleteInstructionSession');
+const getInstructionSessions = require('./getInstructionSessions');
 
 module.exports = {
   getAuthorizedUser,
@@ -16,4 +17,5 @@ module.exports = {
   createInsturctionSession,
   getMyInstructionSessions,
   deleteInstructionSession,
+  getInstructionSessions,
 };

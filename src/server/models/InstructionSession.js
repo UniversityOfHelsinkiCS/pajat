@@ -2,7 +2,7 @@ const { Model } = require('objection');
 
 const knex = require('../utils/knex');
 const BaseModel = require('./BaseModel');
-const Course = require('./Course');
+const User = require('./User');
 
 const getTimeStringFromHour = (hour) =>
   `${hour.toString().padStart('0', 2)}:00`;
@@ -18,16 +18,12 @@ class InstructionSession extends BaseModel {
 
   static get relationMappings() {
     return {
-      courses: {
-        relation: Model.ManyToManyRelation,
-        modelClass: Course,
+      user: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: User,
         join: {
-          from: 'instruction_sessions.user_id',
-          through: {
-            from: 'user_course_competences.user_id',
-            to: 'user_course_competences.course_id',
-          },
-          to: 'courses.id',
+          from: 'instruction_sessions.userId',
+          to: 'users.id',
         },
       },
     };

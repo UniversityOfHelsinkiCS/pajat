@@ -10,10 +10,13 @@ import useMyInstructionSessions from '../../hooks/useMyInstructionSessions';
 import useDeleteInstructionSession from '../../hooks/useDeleteInstructionSession';
 
 import {
-  getInitialValues,
   getPreviousMonday,
   getNextMonday,
   getCurrentMonday,
+} from '../../utils/date';
+
+import {
+  getInitialValues,
   getInstructionSessionFromValues,
   getQueryOptions,
 } from './utils';

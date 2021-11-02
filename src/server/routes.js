@@ -30,6 +30,8 @@ router.post('/courses', controllers.createCourse);
 
 router.post('/instruction-sessions', controllers.createInsturctionSession);
 
+router.get('/instruction-sessions', controllers.getInstructionSessions);
+
 router.delete(
   '/instruction-sessions/:id',
   controllers.deleteInstructionSession,

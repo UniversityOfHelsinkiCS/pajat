@@ -1,12 +1,12 @@
 import { format as formatDate } from 'date-fns';
 
-const parseHour = (time) => time.split(':')[0];
+import { parseHourFromTime } from './date';
 
 const instructionSessionIsAt = (session, date, hour) => {
   const { sessionDate, startTime, endTime } = session;
 
-  const startHour = parseHour(startTime);
-  const endHour = parseHour(endTime);
+  const startHour = parseHourFromTime(startTime);
+  const endHour = parseHourFromTime(endTime);
 
   const dateFormat = 'dd.MM.yyyy';
 
