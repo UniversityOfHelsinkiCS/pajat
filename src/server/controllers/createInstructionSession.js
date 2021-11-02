@@ -7,7 +7,7 @@ const hourSchema = yup.number().min(0).max(23);
 
 const bodySchema = yup.object().shape({
   startHour: hourSchema.required(),
-  endHour: hourSchema.required(),
+  endHour: hourSchema.required().moreThan(yup.ref('startHour')),
   sessionDate: yup.date().required(),
 });
 
