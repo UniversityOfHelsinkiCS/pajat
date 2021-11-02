@@ -7,6 +7,9 @@ const createInsturctionSession = require('./createInstructionSession');
 const getMyInstructionSessions = require('./getMyInstructionSessions');
 const deleteInstructionSession = require('./deleteInstructionSession');
 const getInstructionSessions = require('./getInstructionSessions');
+const getInstructorInvitationToken = require('./getInstructorInvitationToken');
+const claimInstructorAccess = require('./claimInstructorAccess');
+const getInstructors = require('./getInstructors');
 
 module.exports = {
   getAuthorizedUser,
@@ -18,4 +21,7 @@ module.exports = {
   getMyInstructionSessions,
   deleteInstructionSession,
   getInstructionSessions,
+  getInstructorInvitationToken,
+  claimInstructorAccess,
+  getInstructors,
 };

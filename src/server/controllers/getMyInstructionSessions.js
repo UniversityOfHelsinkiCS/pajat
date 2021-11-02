@@ -20,7 +20,7 @@ const getMyInstructionSessions = async (req, res) => {
 
   const instructionSessions = await InstructionSession.query()
     .where({
-      userId: req.user.id,
+      userId: user.id,
     })
     .andWhere((builder) => builder.where('sessionDate', '>=', from))
     .andWhere((builder) => builder.where('sessionDate', '<=', to));

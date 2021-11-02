@@ -16,8 +16,11 @@ const KNEX_CONFIG = {
 
 const PORT = process.env.PORT || 8000;
 
+const { JWT_SECRET } = process.env;
+
 module.exports = {
   ...config,
   KNEX_CONFIG,
   PORT,
+  JWT_SECRET,
 };

@@ -25,6 +25,8 @@ router.get(
   controllers.getMyInstructionSessions,
 );
 
+router.get('/users/instructors', controllers.getInstructors);
+
 router.get('/courses', controllers.getCourses);
 router.post('/courses', controllers.createCourse);
 
@@ -36,6 +38,13 @@ router.delete(
   '/instruction-sessions/:id',
   controllers.deleteInstructionSession,
 );
+
+router.get(
+  '/instructor-invitation-token',
+  controllers.getInstructorInvitationToken,
+);
+
+router.post('/claim-instructor-access', controllers.claimInstructorAccess);
 
 router.use(errorHandler);
 

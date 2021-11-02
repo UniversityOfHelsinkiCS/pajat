@@ -18,6 +18,7 @@ const Drawer = ({ authorizedUser, open, onClose }) => {
   const links = [
     { label: 'Sessions', to: '/' },
     { label: 'Courses', to: '/courses' },
+    authorizedUser.adminAccess && { label: 'Instructors', to: '/instructors' },
     authorizedUser.instructorAccess && {
       label: 'My sessions',
       to: '/my-sessions',

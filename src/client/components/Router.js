@@ -6,6 +6,8 @@ const Profile = React.lazy(() => import('./Profile'));
 const Courses = React.lazy(() => import('./Courses'));
 const CreateCourse = React.lazy(() => import('./CreateCourse'));
 const UserSessions = React.lazy(() => import('./UserSessions'));
+const Instructors = React.lazy(() => import('./Instructors'));
+const InstructorInvitation = React.lazy(() => import('./InstructorInvitation'));
 
 const Router = () => (
   <Switch>
@@ -27,6 +29,14 @@ const Router = () => (
 
     <Route path="/my-sessions" exact>
       <UserSessions />
+    </Route>
+
+    <Route path="/instructors" exact>
+      <Instructors />
+    </Route>
+
+    <Route path="/instructor-invitation/:token" exact>
+      <InstructorInvitation />
     </Route>
   </Switch>
 );

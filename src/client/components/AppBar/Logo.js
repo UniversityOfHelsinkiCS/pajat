@@ -21,7 +21,9 @@ const LogoImg = styled.img`
 const Logo = () => (
   <LogoLink variant="h6" component={Link} to="/">
     <LogoImg src={toskaLogo} alt="Toska" />
-    <span>Pajat</span>
+    <span>
+      Pajat<sup>2</sup>
+    </span>
   </LogoLink>
 );
 
