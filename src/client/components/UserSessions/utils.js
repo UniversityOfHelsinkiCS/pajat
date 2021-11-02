@@ -1,20 +1,10 @@
 import {
   set as setDate,
-  previousMonday,
-  nextMonday,
-  startOfDay,
   getHours,
   format as formatDate,
   startOfWeek,
   endOfWeek,
-  addDays,
 } from 'date-fns';
-
-export const getCurrentMonday = (date) => addDays(startOfWeek(date), 1);
-
-export const getPreviousMonday = (date) => startOfDay(previousMonday(date));
-
-export const getNextMonday = (date) => startOfDay(nextMonday(date));
 
 export const getQueryOptions = (date) => ({
   from: startOfWeek(date),

@@ -15,7 +15,6 @@ const FormikTimePicker = ({ name, fullWidth, ...props }) => {
       value={field.value ?? ''}
       onChange={(value) => {
         helpers.setValue(value);
-        helpers.setTouched(true);
       }}
       renderInput={(textFieldProps) => (
         <TextField

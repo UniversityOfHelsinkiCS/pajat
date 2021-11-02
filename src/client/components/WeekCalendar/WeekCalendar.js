@@ -34,12 +34,6 @@ const TimeCell = styled.td`
     isLeftmostCell ? '1px' : '0px'};
 
   border-top-width: ${({ isTopmostCell }) => (isTopmostCell ? '1px' : '0px')};
-
-  ${({ disabled, theme }) =>
-    disabled &&
-    css`
-      background-color: ${theme.palette.grey['50']};
-    `}
 `;
 
 const DayCell = styled.th`
@@ -59,6 +53,7 @@ const DayCell = styled.th`
 const HourCell = styled.td`
   padding: ${({ theme }) => theme.spacing(1, 2)};
   white-space: nowrap;
+  text-align: right;
 `;
 
 const formatHour = (hour) => hour.toString().padStart(2, '0');
