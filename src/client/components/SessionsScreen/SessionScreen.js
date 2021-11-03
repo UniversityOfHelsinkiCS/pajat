@@ -1,5 +1,6 @@
 import React from 'react';
 import { startOfWeek, endOfWeek } from 'date-fns';
+import { useLocation } from 'react-router-dom';
 
 import {
   Typography,
@@ -14,6 +15,7 @@ import usePublicInstructionSessions from '../../hooks/usePublicInstructionSessio
 import { getCurrentMonday } from '../../utils/date';
 
 import getCoursesFromInstructionSessions from '../../utils/getCoursesFromInstructionSessions';
+import filterInstructionSessionsCourses from '../../utils/filterInstructionSessionsCourses';
 import CourseChip from '../CourseChip';
 import SessionCalendar from '../SessionCalendar';
 import screenTheme from '../../screenTheme';
@@ -26,6 +28,14 @@ const getQueryOptions = (date) => ({
 const REFETCH_INTERVAL = 600000;
 
 const SessionScreen = () => {
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+
+  const courseCodes = (query.get('courseCodes') ?? '')
+    .split(',')
+    .filter(Boolean)
+    .map((code) => code.toUpperCase());
+
   const firstDate = getCurrentMonday(new Date());
 
   const { instructionSessions } = usePublicInstructionSessions({
@@ -34,7 +44,16 @@ const SessionScreen = () => {
     refetchInterval: REFETCH_INTERVAL,
   });
 
-  const courses = getCoursesFromInstructionSessions(instructionSessions ?? []);
+  const filteredInstructionSessions =
+    courseCodes.length > 0
+      ? filterInstructionSessionsCourses(instructionSessions ?? [], (course) =>
+          courseCodes.includes(course.code),
+        )
+      : instructionSessions;
+
+  const courses = getCoursesFromInstructionSessions(
+    filteredInstructionSessions ?? [],
+  );
 
   return (
     <ThemeProvider theme={screenTheme}>
@@ -56,7 +75,7 @@ const SessionScreen = () => {
 
           <SessionCalendar
             firstDate={firstDate}
-            instructionSessions={instructionSessions ?? []}
+            instructionSessions={filteredInstructionSessions ?? []}
           />
         </CardContent>
       </Card>

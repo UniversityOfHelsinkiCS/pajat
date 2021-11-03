@@ -7,10 +7,14 @@ const overrides = {
     WeekCalendar: {
       styleOverrides: {
         dayCell: {
-          fontSize: '1.2rem',
+          [theme.breakpoints.up('xl')]: {
+            fontSize: '1.2rem',
+          },
         },
         hourCell: {
-          fontSize: '1.2rem',
+          [theme.breakpoints.up('xl')]: {
+            fontSize: '1.2rem',
+          },
         },
       },
     },

@@ -1,19 +1,6 @@
-const filterInstructionSessionsByCourseId = (sessions, courseId) => {
-  const filteredSessions = sessions
-    .map((session) => ({
-      ...session,
-      user: session.user
-        ? {
-            ...session.user,
-            competenceCourses: session.user.competenceCourses.filter(
-              (course) => course.id === courseId,
-            ),
-          }
-        : null,
-    }))
-    .filter((session) => session.user?.competenceCourses.length > 0);
+import filterInstructionSessionCourses from './filterInstructionSessionsCourses';
 
-  return filteredSessions;
-};
+const filterInstructionSessionsByCourseId = (sessions, courseId) =>
+  filterInstructionSessionCourses(sessions, (course) => course.id === courseId);
 
 export default filterInstructionSessionsByCourseId;
