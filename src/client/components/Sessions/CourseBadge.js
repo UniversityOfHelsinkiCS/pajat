@@ -14,6 +14,8 @@ const Badge = styled(Box)`
   justify-content: center;
   font-size: 0.85rem;
   font-weight: ${({ theme }) => theme.typography.fontWeightMedium};
+  border: 2px solid white;
+  box-shadow: ${({ theme }) => theme.shadows[1]};
 `;
 
 const CourseBadge = ({ course, ...props }) => {

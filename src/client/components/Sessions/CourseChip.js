@@ -10,7 +10,6 @@ const CourseChip = ({ course, ...props }) => {
       avatar={<Avatar style={{ backgroundColor: color }}> </Avatar>}
       label={course.name}
       variant="outlined"
-      size="small"
       {...props}
     />
   );

@@ -22,6 +22,7 @@ import styled from '@emotion/styled';
 const Table = styled.table`
   width: 100%;
   min-width: 500px;
+  border-spacing: 0;
 `;
 
 const TimeCell = styled.td`
@@ -29,6 +30,8 @@ const TimeCell = styled.td`
   border-width: 1px;
   border-style: solid;
   position: relative;
+  padding: 0px;
+  margin: 0px;
 
   border-left-width: ${({ isLeftmostCell }) =>
     isLeftmostCell ? '1px' : '0px'};
