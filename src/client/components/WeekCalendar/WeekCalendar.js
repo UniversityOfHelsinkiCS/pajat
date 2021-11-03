@@ -59,6 +59,30 @@ const HourCell = styled.td`
   text-align: right;
 `;
 
+const WeekSelect = ({ firstDate, lastDate, onPreviousWeek, onNextWeek }) => (
+  <Box display="flex">
+    <Box flexGrow={0}>
+      <Tooltip title="Previous week">
+        <IconButton onClick={onPreviousWeek}>
+          <LeftIcon />
+        </IconButton>
+      </Tooltip>
+    </Box>
+
+    <Typography flexGrow={1} variant="h6" align="center">
+      {formatDate(firstDate, 'dd.MM.')} - {formatDate(lastDate, 'dd.MM.')}
+    </Typography>
+
+    <Box flexGrow={0}>
+      <Tooltip title="Next week">
+        <IconButton onClick={onNextWeek}>
+          <RightIcon />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  </Box>
+);
+
 const formatHour = (hour) => hour.toString().padStart(2, '0');
 
 const WeekCalendar = ({
@@ -67,8 +91,8 @@ const WeekCalendar = ({
   firstDate,
   numberOfDates = 5,
   renderCell = () => null,
-  onPreviousWeek = () => {},
-  onNextWeek = () => {},
+  onPreviousWeek,
+  onNextWeek,
 }) => {
   const hours = [...Array(maxHour - minHour)].map(
     (value, index) => minHour + index,
@@ -83,28 +107,16 @@ const WeekCalendar = ({
 
   return (
     <>
-      <Box mb={1} display="flex">
-        <Box flexGrow={0}>
-          <Tooltip title="Previous week">
-            <IconButton onClick={onPreviousWeek}>
-              <LeftIcon />
-            </IconButton>
-          </Tooltip>
+      {onNextWeek && onPreviousWeek && (
+        <Box mb={1}>
+          <WeekSelect
+            firstDate={firstWeekDate}
+            lastDate={lastWeekDate}
+            onPreviousWeek={onPreviousWeek}
+            onNextWeek={onNextWeek}
+          />
         </Box>
-
-        <Typography flexGrow={1} variant="h6" align="center">
-          {formatDate(firstWeekDate, 'dd.MM.')} -{' '}
-          {formatDate(lastWeekDate, 'dd.MM.')}
-        </Typography>
-
-        <Box flexGrow={0}>
-          <Tooltip title="Next week">
-            <IconButton onClick={onNextWeek}>
-              <RightIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </Box>
+      )}
 
       <TableContainer>
         <Table cellSpacing={0}>

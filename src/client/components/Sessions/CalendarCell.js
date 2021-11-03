@@ -30,12 +30,14 @@ const getTooltipTitle = (course) => {
 const CalendarCell = ({ date, hour, instructionSessions }) => {
   const courses = getInstructedCoursesAt(instructionSessions, date, hour);
 
+  const hasSession = courses.length > 0;
+
   return (
-    <BaseCell hasSession={courses.length > 0} focusRipple>
+    <BaseCell hasSession={hasSession} disabled={!hasSession} focusRipple>
       {courses.map((course) => (
         <Tooltip key={course.id} title={getTooltipTitle(course)}>
-          <Box sx={{ display: 'inline-block' }}>
-            <CourseBadge course={course} sx={{ m: 0.5 }} />
+          <Box sx={{ display: 'inline-block', m: 0.5 }}>
+            <CourseBadge course={course} />
           </Box>
         </Tooltip>
       ))}
