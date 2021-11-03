@@ -11,7 +11,7 @@ const getInstructorInvitationToken = (req, res) => {
   }
 
   const token = jwt.sign({ invitedBy: user.id }, JWT_SECRET, {
-    subject: 'instructorInvidation',
+    subject: 'instructorInvitation',
     expiresIn: '30d',
   });
 

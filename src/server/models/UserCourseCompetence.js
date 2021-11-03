@@ -3,11 +3,11 @@ const BaseModel = require('./BaseModel');
 
 class UserCourseCompetence extends BaseModel {
   static get tableName() {
-    return 'user_course_competences';
+    return 'userCourseCompetences';
   }
 
   static get idColumn() {
-    return ['user_id', 'course_id'];
+    return ['userId', 'courseId'];
   }
 }
 

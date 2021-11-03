@@ -13,7 +13,7 @@ const claimInstructorAccess = async (req, res) => {
 
   const { token } = await bodySchema.validate(req.body);
 
-  await jwt.verify(token, JWT_SECRET, { subject: 'instructorInvidation' });
+  await jwt.verify(token, JWT_SECRET, { subject: 'instructorInvitation' });
 
   const updatedUser = await User.query().patchAndFetchById(user.id, {
     instructor: true,

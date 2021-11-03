@@ -28,8 +28,8 @@ class User extends BaseModel {
         join: {
           from: 'users.id',
           through: {
-            from: 'user_course_competences.user_id',
-            to: 'user_course_competences.course_id',
+            from: 'userCourseCompetences.userId',
+            to: 'userCourseCompetences.courseId',
           },
           to: 'courses.id',
         },

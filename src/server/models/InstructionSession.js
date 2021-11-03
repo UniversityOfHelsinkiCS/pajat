@@ -9,7 +9,7 @@ const getTimeStringFromHour = (hour) =>
 
 class InstructionSession extends BaseModel {
   static get tableName() {
-    return 'instruction_sessions';
+    return 'instructionSessions';
   }
 
   static get idColumn() {
@@ -22,7 +22,7 @@ class InstructionSession extends BaseModel {
         relation: Model.BelongsToOneRelation,
         modelClass: User,
         join: {
-          from: 'instruction_sessions.userId',
+          from: 'instructionSessions.userId',
           to: 'users.id',
         },
       },

@@ -10,7 +10,7 @@ const getInstructors = async (req, res) => {
 
   const instructors = await User.query()
     .where({ instructor: true })
-    .orderBy('createdAt');
+    .orderBy('createdAt', 'desc');
 
   res.send(instructors);
 };

@@ -26,7 +26,7 @@ const SessionTimeCellBase = styled(BaseCell)`
   ${({ disabled, theme }) =>
     disabled &&
     css`
-      background-color: ${theme.palette.grey['100']};
+      background-color: ${theme.palette.grey['200']};
       border-color: ${theme.palette.grey['500']};
     `}
 `;

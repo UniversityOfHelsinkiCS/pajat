@@ -6,7 +6,10 @@ const { ForbiddenError } = require('../utils/errors');
 
 const querySchema = yup.object().shape({
   from: yup.date().default(() => dateFns.subDays(new Date(), 30)),
-  to: yup.date().default(() => dateFns.addDays(new Date(), 30)),
+  to: yup
+    .date()
+    .default(() => dateFns.addDays(new Date(), 30))
+    .min(yup.ref('from')),
 });
 
 const getMyInstructionSessions = async (req, res) => {
@@ -22,8 +25,8 @@ const getMyInstructionSessions = async (req, res) => {
     .where({
       userId: user.id,
     })
-    .andWhere((builder) => builder.where('sessionDate', '>=', from))
-    .andWhere((builder) => builder.where('sessionDate', '<=', to));
+    .andWhere('sessionDate', '>=', from)
+    .andWhere('sessionDate', '<=', to);
 
   res.send(instructionSessions);
 };

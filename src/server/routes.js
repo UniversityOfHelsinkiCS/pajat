@@ -10,6 +10,11 @@ const router = express.Router();
 
 router.use(express.json());
 
+router.get(
+  '/public/instruction-sessions',
+  controllers.getPublicInstructionSessions,
+);
+
 router.use(shibbolethCharsetMiddleware);
 router.use(getAuthorizedUser);
 router.use(accessLogger);

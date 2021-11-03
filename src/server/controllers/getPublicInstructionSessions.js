@@ -2,6 +2,7 @@ const yup = require('yup');
 const dateFns = require('date-fns');
 
 const { InstructionSession } = require('../models');
+const { UserInputError } = require('../utils/errors');
 
 const querySchema = yup.object().shape({
   from: yup.date().default(() => dateFns.subDays(new Date(), 30)),
@@ -11,15 +12,29 @@ const querySchema = yup.object().shape({
     .min(yup.ref('from')),
 });
 
-const getInstructionSessions = async (req, res) => {
+const getPublicInstructionSessions = async (req, res) => {
   const { from, to } = await querySchema.validate(req.query);
+
+  if (dateFns.differenceInDays(from, to) > 180) {
+    throw new UserInputError('Maximum from and to range is 180 days');
+  }
 
   const instructionSessions = await InstructionSession.query()
     .andWhere('sessionDate', '>=', from)
     .andWhere('sessionDate', '<=', to)
     .withGraphFetched('user.competenceCourses');
 
-  res.send(instructionSessions);
+  const publicInstructionSessions = instructionSessions.map((session) => ({
+    ...session,
+    user: session.user
+      ? {
+          id: session.user.id,
+          competenceCourses: session.user.competenceCourses,
+        }
+      : null,
+  }));
+
+  res.send(publicInstructionSessions);
 };
 
-module.exports = getInstructionSessions;
+module.exports = getPublicInstructionSessions;

@@ -5,8 +5,8 @@ import styled from '@emotion/styled';
 
 const Badge = styled(Box)`
   border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
+  width: 1.8rem;
+  height: 1.8rem;
   background-color: ${({ color }) => color};
   color: ${({ theme, color }) => theme.palette.getContrastText(color)};
   display: inline-flex;
