@@ -1,14 +1,6 @@
 import React from 'react';
 import { startOfWeek, endOfWeek } from 'date-fns';
-import { useLocation } from 'react-router-dom';
-
-import {
-  Typography,
-  Card,
-  CardContent,
-  Box,
-  ThemeProvider,
-} from '@mui/material';
+import { Typography, Box } from '@mui/material';
 
 import usePublicInstructionSessions from '../../hooks/usePublicInstructionSessions';
 
@@ -18,7 +10,8 @@ import getCoursesFromInstructionSessions from '../../utils/getCoursesFromInstruc
 import filterInstructionSessionsCourses from '../../utils/filterInstructionSessionsCourses';
 import CourseChip from '../CourseChip';
 import SessionCalendar from '../SessionCalendar';
-import screenTheme from '../../screenTheme';
+import ScreenContainer from '../ScreenContainer';
+import useQueryParams from '../../hooks/useQueryParams';
 
 const getQueryOptions = (date) => ({
   from: startOfWeek(date),
@@ -28,13 +21,14 @@ const getQueryOptions = (date) => ({
 const REFETCH_INTERVAL = 600000;
 
 const SessionScreen = () => {
-  const location = useLocation();
-  const query = new URLSearchParams(location.search);
+  const query = useQueryParams();
 
-  const courseCodes = (query.get('courseCodes') ?? '')
+  const courseCodes = (query.courseCodes ?? '')
     .split(',')
     .filter(Boolean)
     .map((code) => code.toUpperCase());
+
+  const dense = query.dense !== 'false';
 
   const firstDate = getCurrentMonday(new Date());
 
@@ -56,30 +50,22 @@ const SessionScreen = () => {
   );
 
   return (
-    <ThemeProvider theme={screenTheme}>
+    <ScreenContainer dense={dense}>
       <Typography component="h1" variant="h3" mb={2}>
         BK107 Paja / Workshop
       </Typography>
 
-      <Card>
-        <CardContent>
-          <Box mb={2}>
-            {courses.map((course) => (
-              <CourseChip
-                key={course.id}
-                course={course}
-                sx={{ mr: 1, mb: 1 }}
-              />
-            ))}
-          </Box>
+      <Box mb={2}>
+        {courses.map((course) => (
+          <CourseChip key={course.id} course={course} sx={{ mr: 1, mb: 1 }} />
+        ))}
+      </Box>
 
-          <SessionCalendar
-            firstDate={firstDate}
-            instructionSessions={filteredInstructionSessions ?? []}
-          />
-        </CardContent>
-      </Card>
-    </ThemeProvider>
+      <SessionCalendar
+        firstDate={firstDate}
+        instructionSessions={filteredInstructionSessions ?? []}
+      />
+    </ScreenContainer>
   );
 };
 

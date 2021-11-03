@@ -1,13 +1,6 @@
 import React from 'react';
 import { startOfWeek, endOfWeek } from 'date-fns';
-
-import {
-  Typography,
-  Card,
-  CardContent,
-  ThemeProvider,
-  Alert,
-} from '@mui/material';
+import { Typography, Alert } from '@mui/material';
 
 import { useParams } from 'react-router-dom';
 
@@ -15,9 +8,10 @@ import usePublicInstructionSessions from '../../hooks/usePublicInstructionSessio
 import { getCurrentMonday } from '../../utils/date';
 import filterInstructionSessionsByCourseId from '../../utils/filterInstructionSessionsByCourseId';
 import SessionCalendar from '../SessionCalendar';
-import screenTheme from '../../screenTheme';
+import ScreenContainer from '../ScreenContainer';
 import useCourse from '../../hooks/useCourse';
 import PageProgress from '../PageProgress';
+import useQueryParams from '../../hooks/useQueryParams';
 
 const getQueryOptions = (date) => ({
   from: startOfWeek(date),
@@ -28,8 +22,11 @@ const REFETCH_INTERVAL = 600000;
 
 const CourseSessionsScreen = () => {
   const { code } = useParams();
+  const query = useQueryParams();
   const firstDate = getCurrentMonday(new Date());
   const normalizedCode = code.toUpperCase();
+  const dense = query.dense !== 'false';
+  const showCourseName = query.showCourseName === 'true';
 
   const { instructionSessions } = usePublicInstructionSessions({
     ...getQueryOptions(firstDate),
@@ -47,13 +44,9 @@ const CourseSessionsScreen = () => {
 
   if (!course) {
     return (
-      <Card>
-        <CardContent>
-          <Alert severity="error">
-            Course with course code {normalizedCode} is not found
-          </Alert>
-        </CardContent>
-      </Card>
+      <Alert severity="error">
+        Course with course code {normalizedCode} is not found
+      </Alert>
     );
   }
 
@@ -63,20 +56,18 @@ const CourseSessionsScreen = () => {
   );
 
   return (
-    <ThemeProvider theme={screenTheme}>
-      <Typography component="h1" variant="h3" mb={2}>
-        {course.name} BK107 Paja / Workshop
-      </Typography>
+    <ScreenContainer dense={dense}>
+      {showCourseName && (
+        <Typography component="h1" variant="h3" mb={2}>
+          {course.name}
+        </Typography>
+      )}
 
-      <Card>
-        <CardContent>
-          <SessionCalendar
-            firstDate={firstDate}
-            instructionSessions={courseInstructionSessions}
-          />
-        </CardContent>
-      </Card>
-    </ThemeProvider>
+      <SessionCalendar
+        firstDate={firstDate}
+        instructionSessions={courseInstructionSessions}
+      />
+    </ScreenContainer>
   );
 };
 

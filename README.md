@@ -1,12 +1,30 @@
 # Pajat
 
-- Production in TODO
-- Staging in TODO
+Production in https://study.cs.helsinki.fi/pajat2
 
 ## Issues with Pajat
 
 Send an issue if you find mistakes, problems or something to improve in Pajat.
 Feel free to create a pull request.
+
+## Embedded calendars
+
+There's an embedded view for multiple and single courses. Both views will automatically refresh themselves with a sensible interval.
+
+Multiple courses view is at https://study.cs.helsinki.fi/pajat2/public/screen. You can choose the displayed courses by providing a `courseCodes` query parameter with the course codes separated by a comma. For example https://study.cs.helsinki.fi/pajat2/public/screen?courseCodes=tkt20002,tkt20006.
+
+The single course view is at path `/pajat2/public/screen/:courseCode` where `:courseCode` is the course's course code. For example https://study.cs.helsinki.fi/pajat2/public/screen/tkt20002. If you want to display the course's name you can set the `showCourseName` query parameter as `true`. For example https://study.cs.helsinki.fi/pajat2/public/screen/tkt20002?showCourseName=true.
+
+Both views accept a `dense` query parameter which, if set to `false` will add small padding for the view. For example https://study.cs.helsinki.fi/pajat2/public/screen?courseCodes=tkt20002&dense=false.
+
+A calendar can be embedded into a website using a [<iframe>](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe) tag. For example:
+
+```html
+<iframe
+  src="https://study.cs.helsinki.fi/pajat2/public/screen/tkt20002"
+  style="border: 0px; width: 100%; height: 600px;"
+></iframe>
+```
 
 ## Environment configuration
 

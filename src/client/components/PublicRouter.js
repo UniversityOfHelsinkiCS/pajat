@@ -1,6 +1,5 @@
 import React, { Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { Container } from '@mui/material';
 
 import PageProgress from './PageProgress';
 
@@ -20,11 +19,9 @@ const Router = () => (
 );
 
 const PublicRouter = () => (
-  <Container sx={{ my: 2 }} maxWidth="xl">
-    <Suspense fallback={<PageProgress />}>
-      <Router />
-    </Suspense>
-  </Container>
+  <Suspense fallback={<PageProgress />}>
+    <Router />
+  </Suspense>
 );
 
 export default PublicRouter;

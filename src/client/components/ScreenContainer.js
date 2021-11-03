@@ -1,6 +1,8 @@
+import React from 'react';
+import { ThemeProvider, CssBaseline, Box } from '@mui/material';
 import { merge } from 'lodash';
 
-import theme from './theme';
+import theme from '../theme';
 
 const overrides = {
   palette: {
@@ -28,4 +30,11 @@ const overrides = {
 
 const screenTheme = merge({}, theme, overrides);
 
-export default screenTheme;
+const ScreenContainer = ({ children, dense = false }) => (
+  <ThemeProvider theme={screenTheme}>
+    <CssBaseline />
+    <Box p={dense ? 0 : 2}>{children}</Box>
+  </ThemeProvider>
+);
+
+export default ScreenContainer;
