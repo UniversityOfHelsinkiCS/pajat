@@ -1,7 +1,8 @@
 import React from 'react';
-import stringToColor from 'string-to-color';
 import { Box } from '@mui/material';
 import styled from '@emotion/styled';
+
+import getCourseColor from '../../utils/getCourseColor';
 
 const Badge = styled(Box)`
   border-radius: 50%;
@@ -19,7 +20,7 @@ const Badge = styled(Box)`
 `;
 
 const CourseBadge = ({ course, ...props }) => {
-  const color = stringToColor(course.id);
+  const color = getCourseColor(course);
 
   return (
     <Badge color={color} {...props}>

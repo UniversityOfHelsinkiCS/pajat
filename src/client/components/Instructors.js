@@ -11,7 +11,6 @@ import {
   TableRow,
   Box,
   Button,
-  CircularProgress,
 } from '@mui/material';
 
 import { Redirect } from 'react-router-dom';
@@ -20,6 +19,7 @@ import { useSnackbar } from 'notistack';
 import useInstructors from '../hooks/useInstructors';
 import useAuthorizedUser from '../hooks/useAuthorizedUser';
 import useInstructorInvitationToken from '../hooks/useInstructorInvitationToken';
+import PageProgress from './PageProgress';
 import { BASE_PATH } from '../config';
 
 const copyToClipboard = (text) => navigator.clipboard.writeText(text);
@@ -37,11 +37,7 @@ const Instructors = () => {
   const { token } = useInstructorInvitationToken();
 
   if (isLoading) {
-    return (
-      <Box my={4} display="flex" justifyContent="center">
-        <CircularProgress />
-      </Box>
-    );
+    return <PageProgress />;
   }
 
   if (!instructors) {

@@ -11,24 +11,20 @@ import {
   TableRow,
   Box,
   Button,
-  CircularProgress,
 } from '@mui/material';
 
 import { Redirect, Link } from 'react-router-dom';
 
 import useCourses from '../hooks/useCourses';
 import useAuthorizedUser from '../hooks/useAuthorizedUser';
+import PageProgress from './PageProgress';
 
 const Courses = () => {
   const { authorizedUser } = useAuthorizedUser();
   const { courses, isLoading } = useCourses();
 
   if (isLoading) {
-    return (
-      <Box my={4} display="flex" justifyContent="center">
-        <CircularProgress />
-      </Box>
-    );
+    return <PageProgress />;
   }
 
   if (!courses) {

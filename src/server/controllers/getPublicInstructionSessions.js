@@ -24,15 +24,15 @@ const getPublicInstructionSessions = async (req, res) => {
     .andWhere('sessionDate', '<=', to)
     .withGraphFetched('user.competenceCourses');
 
-  const publicInstructionSessions = instructionSessions.map((session) => ({
-    ...session,
-    user: session.user
-      ? {
-          id: session.user.id,
-          competenceCourses: session.user.competenceCourses,
-        }
-      : null,
-  }));
+  const publicInstructionSessions = instructionSessions
+    .filter(({ user }) => Boolean(user))
+    .map((session) => ({
+      ...session,
+      user: {
+        id: session.user.id,
+        competenceCourses: session.user.competenceCourses,
+      },
+    }));
 
   res.send(publicInstructionSessions);
 };

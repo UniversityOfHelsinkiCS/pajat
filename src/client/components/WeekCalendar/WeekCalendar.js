@@ -51,12 +51,17 @@ const DayCell = styled.th`
       color: ${theme.palette.primary.main};
       border-bottom: 3px solid ${theme.palette.primary.main};
     `}
+
+  ${({ theme }) => theme.components?.WeekCalendar?.styleOverrides?.dayCell}
 `;
 
 const HourCell = styled.td`
   padding: ${({ theme }) => theme.spacing(1, 2)};
   white-space: nowrap;
   text-align: right;
+  font-size: 1rem;
+
+  ${({ theme }) => theme.components?.WeekCalendar?.styleOverrides?.hourCell}
 `;
 
 const WeekSelect = ({ firstDate, lastDate, onPreviousWeek, onNextWeek }) => (

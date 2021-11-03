@@ -15,6 +15,8 @@ router.get(
   controllers.getPublicInstructionSessions,
 );
 
+router.get('/public/courses/:code', controllers.getCourse);
+
 router.use(shibbolethCharsetMiddleware);
 router.use(getAuthorizedUser);
 router.use(accessLogger);

@@ -1,45 +1,45 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { startOfWeek, endOfWeek } from 'date-fns';
-import { Typography, Card, CardContent, Box } from '@mui/material';
-
-import useInstructionSessions from '../../hooks/useInstructionSessions';
 
 import {
-  getCurrentMonday,
-  getPreviousMonday,
-  getNextMonday,
-} from '../../utils/date';
+  Typography,
+  Card,
+  CardContent,
+  Box,
+  ThemeProvider,
+} from '@mui/material';
+
+import usePublicInstructionSessions from '../../hooks/usePublicInstructionSessions';
+
+import { getCurrentMonday } from '../../utils/date';
 
 import getCoursesFromInstructionSessions from '../../utils/getCoursesFromInstructionSessions';
 import CourseChip from '../CourseChip';
 import SessionCalendar from '../SessionCalendar';
-import PageProgress from '../PageProgress';
+import screenTheme from '../../screenTheme';
 
 const getQueryOptions = (date) => ({
   from: startOfWeek(date),
   to: endOfWeek(date),
 });
 
-const Sessions = () => {
-  const [firstDate, setFirstDate] = useState(() =>
-    getCurrentMonday(new Date()),
-  );
+const REFETCH_INTERVAL = 600000;
 
-  const { instructionSessions, isLoading } = useInstructionSessions({
+const SessionScreen = () => {
+  const firstDate = getCurrentMonday(new Date());
+
+  const { instructionSessions } = usePublicInstructionSessions({
     ...getQueryOptions(firstDate),
     keepPreviousData: true,
+    refetchInterval: REFETCH_INTERVAL,
   });
 
-  if (isLoading) {
-    return <PageProgress />;
-  }
-
-  const courses = getCoursesFromInstructionSessions(instructionSessions);
+  const courses = getCoursesFromInstructionSessions(instructionSessions ?? []);
 
   return (
-    <>
-      <Typography component="h1" variant="h4" mb={2}>
-        Sessions
+    <ThemeProvider theme={screenTheme}>
+      <Typography component="h1" variant="h3" mb={2}>
+        BK107 Paja / Workshop
       </Typography>
 
       <Card>
@@ -57,13 +57,11 @@ const Sessions = () => {
           <SessionCalendar
             firstDate={firstDate}
             instructionSessions={instructionSessions ?? []}
-            onPreviousWeek={() => setFirstDate(getPreviousMonday(firstDate))}
-            onNextWeek={() => setFirstDate(getNextMonday(firstDate))}
           />
         </CardContent>
       </Card>
-    </>
+    </ThemeProvider>
   );
 };
 
-export default Sessions;
+export default SessionScreen;

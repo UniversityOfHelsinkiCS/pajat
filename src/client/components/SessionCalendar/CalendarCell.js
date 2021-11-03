@@ -1,25 +1,9 @@
 import React from 'react';
-import { Tooltip, ButtonBase, Box } from '@mui/material';
-import styled from '@emotion/styled';
-import { css } from '@emotion/react';
-import { amber } from '@mui/material/colors';
+import { Tooltip, Box } from '@mui/material';
 
-import { getInstructedCoursesAt } from './utils';
+import getInstructedCoursesAt from '../../utils/getInstructedCoursesAt';
 import CourseBadge from './CourseBadge';
-
-const BaseCell = styled(ButtonBase)`
-  padding: ${({ theme }) => theme.spacing(0.5)};
-  display: block;
-  width: 100%;
-  text-align: left;
-
-  ${({ hasSession }) =>
-    hasSession &&
-    css`
-      background-color: ${amber['100']};
-      border-left: 3px solid ${amber['500']};
-    `}
-`;
+import CalendarEvent from '../CalendarEvent';
 
 const getTooltipTitle = (course) => {
   const { name, instructorCount } = course;
@@ -32,8 +16,8 @@ const CalendarCell = ({ date, hour, instructionSessions }) => {
 
   const hasSession = courses.length > 0;
 
-  return (
-    <BaseCell hasSession={hasSession} disabled={!hasSession} focusRipple>
+  return hasSession ? (
+    <CalendarEvent sx={{ p: 0.5 }} focusRipple>
       {courses.map((course) => (
         <Tooltip key={course.id} title={getTooltipTitle(course)}>
           <Box sx={{ display: 'inline-block', m: 0.5 }}>
@@ -41,8 +25,8 @@ const CalendarCell = ({ date, hour, instructionSessions }) => {
           </Box>
         </Tooltip>
       ))}
-    </BaseCell>
-  );
+    </CalendarEvent>
+  ) : null;
 };
 
 export default CalendarCell;

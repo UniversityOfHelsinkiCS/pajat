@@ -11,6 +11,7 @@ const getInstructorInvitationToken = require('./getInstructorInvitationToken');
 const claimInstructorAccess = require('./claimInstructorAccess');
 const getInstructors = require('./getInstructors');
 const getPublicInstructionSessions = require('./getPublicInstructionSessions');
+const getCourse = require('./getCourse');
 
 module.exports = {
   getAuthorizedUser,
@@ -26,4 +27,5 @@ module.exports = {
   claimInstructorAccess,
   getInstructors,
   getPublicInstructionSessions,
+  getCourse,
 };

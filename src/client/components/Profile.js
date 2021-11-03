@@ -7,8 +7,6 @@ import {
   FormGroup,
   FormControlLabel,
   Switch,
-  Box,
-  CircularProgress,
 } from '@mui/material';
 
 import { Redirect } from 'react-router-dom';
@@ -17,6 +15,7 @@ import { useSnackbar } from 'notistack';
 import useAuthorizedUser from '../hooks/useAuthorizedUser';
 import useCourses from '../hooks/useCourses';
 import useUpdateCompetenceCourses from '../hooks/useUpdateCompetenceCourses';
+import PageProgress from './PageProgress';
 
 const SwitchList = ({ courses, competenceCourses }) => {
   const { enqueueSnackbar } = useSnackbar();
@@ -74,11 +73,7 @@ const Profile = () => {
   const isLoading = authorizedUserIsLoading || coursesIsLoading;
 
   if (isLoading) {
-    return (
-      <Box display="flex" justifyContent="center" my={4}>
-        <CircularProgress />
-      </Box>
-    );
+    return <PageProgress />;
   }
 
   if (!authorizedUser || !courses) {

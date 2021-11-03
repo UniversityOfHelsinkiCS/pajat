@@ -1,9 +1,9 @@
 import React from 'react';
 import { Chip, Avatar } from '@mui/material';
-import stringToColor from 'string-to-color';
+import getCourseColor from '../utils/getCourseColor';
 
 const CourseChip = ({ course, ...props }) => {
-  const color = stringToColor(course.id);
+  const color = getCourseColor(course);
 
   return (
     <Chip

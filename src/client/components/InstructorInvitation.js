@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { Box, CircularProgress } from '@mui/material';
 import { useParams, useHistory } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from 'react-query';
 
 import useClaimInstructorAccess from '../hooks/useClaimInstructorAccess';
+import PageProgress from './PageProgress';
 
 const InstructorInvitation = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -30,11 +30,7 @@ const InstructorInvitation = () => {
     history.replace('/');
   }, [token]);
 
-  return (
-    <Box my={4} display="flex" justifyContent="center">
-      <CircularProgress />
-    </Box>
-  );
+  return <PageProgress />;
 };
 
 export default InstructorInvitation;

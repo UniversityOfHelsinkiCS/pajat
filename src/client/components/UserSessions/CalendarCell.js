@@ -1,34 +1,32 @@
 import React, { useState, useRef } from 'react';
 import { ButtonBase, Menu, MenuItem } from '@mui/material';
 import styled from '@emotion/styled';
-import { amber } from '@mui/material/colors';
-import { isPast, endOfDay } from 'date-fns';
 import { css } from '@emotion/react';
+import { isPast, endOfDay } from 'date-fns';
 
 import instructionSessionIsAt from '../../utils/instructionSessionIsAt';
+import CalendarEvent from '../CalendarEvent';
 
-const BaseCell = styled(ButtonBase)`
+const EmptyCell = styled(ButtonBase)`
   position: absolute;
   top: 0px;
   left: 0px;
   width: 100%;
   height: 100%;
-`;
-
-const DisabledEmptyCell = styled(BaseCell)`
-  background-color: ${({ theme }) => theme.palette.grey['50']};
-`;
-
-const SessionTimeCellBase = styled(BaseCell)`
-  background-color: ${amber['100']};
-  border-left: 3px solid ${amber['500']};
 
   ${({ disabled, theme }) =>
     disabled &&
     css`
-      background-color: ${theme.palette.grey['200']};
-      border-color: ${theme.palette.grey['500']};
+      background-color: ${theme.palette.grey['50']};
     `}
+`;
+
+const BaseSessionTimeCell = styled(CalendarEvent)`
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
 `;
 
 const SessionTimeCell = ({ session, disabled, onDelete }) => {
@@ -50,7 +48,7 @@ const SessionTimeCell = ({ session, disabled, onDelete }) => {
         <MenuItem onClick={handleDelete}>Remove session</MenuItem>
       </Menu>
 
-      <SessionTimeCellBase
+      <BaseSessionTimeCell
         ref={cellRef}
         disabled={disabled}
         onClick={() => setMenuOpen(true)}
@@ -77,10 +75,12 @@ const CalendarCell = ({ date, hour, onNew, onDelete, instructionSessions }) => {
     );
   }
 
-  return disabled ? (
-    <DisabledEmptyCell disabled={disabled} />
-  ) : (
-    <BaseCell onClick={() => onNew(date, hour)} focusRipple />
+  return (
+    <EmptyCell
+      disabled={disabled}
+      onClick={() => onNew(date, hour)}
+      focusRipple
+    />
   );
 };
 

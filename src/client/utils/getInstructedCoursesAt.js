@@ -1,28 +1,14 @@
-import { startOfWeek, endOfWeek } from 'date-fns';
 import { uniqBy } from 'lodash';
 
-import instructionSessionIsAt from '../../utils/instructionSessionIsAt';
+import instructionSessionIsAt from './instructionSessionIsAt';
+import getCoursesFromInstructionSessions from './getCoursesFromInstructionSessions';
 
-export const getQueryOptions = (date) => ({
-  from: startOfWeek(date),
-  to: endOfWeek(date),
-});
-
-export const getCourses = (sessions) => {
-  const courses = uniqBy(
-    sessions.flatMap((session) => session.user?.competenceCourses ?? []),
-    ({ id }) => id,
-  );
-
-  return courses;
-};
-
-export const getInstructedCoursesAt = (sessions, date, hour) => {
+const getInstructedCoursesAt = (sessions, date, hour) => {
   const timeSessions = sessions.filter((session) =>
     instructionSessionIsAt(session, date, hour),
   );
 
-  const courses = getCourses(timeSessions);
+  const courses = getCoursesFromInstructionSessions(timeSessions);
 
   const coursesWithInstructorCounts = courses.map((course) => {
     const usersWithCourseCompetence = uniqBy(
@@ -42,3 +28,5 @@ export const getInstructedCoursesAt = (sessions, date, hour) => {
 
   return coursesWithInstructorCounts;
 };
+
+export default getInstructedCoursesAt;
