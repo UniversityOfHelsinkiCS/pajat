@@ -12,15 +12,18 @@ import CourseChip from '../CourseChip';
 import SessionCalendar from '../SessionCalendar';
 import ScreenContainer from '../ScreenContainer';
 import useQueryParams from '../../hooks/useQueryParams';
+import usePageReloadTimeout from '../../hooks/usePageReloadTimeout';
 
 const getQueryOptions = (date) => ({
   from: startOfWeek(date),
   to: endOfWeek(date),
 });
 
-const REFETCH_INTERVAL = 600000;
+const RELOAD_INTERVAL = 900000;
 
 const SessionScreen = () => {
+  usePageReloadTimeout(RELOAD_INTERVAL);
+
   const query = useQueryParams();
 
   const courseCodes = (query.courseCodes ?? '')
@@ -32,11 +35,9 @@ const SessionScreen = () => {
 
   const firstDate = getCurrentMonday(new Date());
 
-  const { instructionSessions } = usePublicInstructionSessions({
-    ...getQueryOptions(firstDate),
-    keepPreviousData: true,
-    refetchInterval: REFETCH_INTERVAL,
-  });
+  const { instructionSessions } = usePublicInstructionSessions(
+    getQueryOptions(firstDate),
+  );
 
   const filteredInstructionSessions =
     courseCodes.length > 0

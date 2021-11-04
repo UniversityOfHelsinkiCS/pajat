@@ -12,31 +12,31 @@ import ScreenContainer from '../ScreenContainer';
 import useCourse from '../../hooks/useCourse';
 import PageProgress from '../PageProgress';
 import useQueryParams from '../../hooks/useQueryParams';
+import usePageReloadTimeout from '../../hooks/usePageReloadTimeout';
 
 const getQueryOptions = (date) => ({
   from: startOfWeek(date),
   to: endOfWeek(date),
 });
 
-const REFETCH_INTERVAL = 600000;
+const RELOAD_INTERVAL = 900000;
 
 const CourseSessionsScreen = () => {
+  usePageReloadTimeout(RELOAD_INTERVAL);
+
   const { code } = useParams();
   const query = useQueryParams();
+
   const firstDate = getCurrentMonday(new Date());
   const normalizedCode = code.toUpperCase();
   const dense = query.dense !== 'false';
   const showCourseName = query.showCourseName === 'true';
 
-  const { instructionSessions } = usePublicInstructionSessions({
-    ...getQueryOptions(firstDate),
-    keepPreviousData: true,
-    refetchInterval: REFETCH_INTERVAL,
-  });
+  const { instructionSessions } = usePublicInstructionSessions(
+    getQueryOptions(firstDate),
+  );
 
-  const { course, isLoading } = useCourse(normalizedCode, {
-    refetchInterval: REFETCH_INTERVAL,
-  });
+  const { course, isLoading } = useCourse(normalizedCode);
 
   if (isLoading) {
     return <PageProgress />;

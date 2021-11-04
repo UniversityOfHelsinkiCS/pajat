@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { startOfWeek, endOfWeek } from 'date-fns';
 import { Typography, Card, CardContent, Box } from '@mui/material';
 
 import useInstructionSessions from '../../hooks/useInstructionSessions';
@@ -11,16 +10,15 @@ import {
 } from '../../utils/date';
 
 import getCoursesFromInstructionSessions from '../../utils/getCoursesFromInstructionSessions';
+import filterInstructionSessionsByCourses from '../../utils/filterInstructionSessionsByCourses';
 import CourseChip from '../CourseChip';
 import SessionCalendar from '../SessionCalendar';
 import PageProgress from '../PageProgress';
-
-const getQueryOptions = (date) => ({
-  from: startOfWeek(date),
-  to: endOfWeek(date),
-});
+import { getQueryOptions, useSelectedCourseCodes } from './utils';
 
 const Sessions = () => {
+  const { selectedCourseCodes, toggleCourseCode } = useSelectedCourseCodes();
+
   const [firstDate, setFirstDate] = useState(() =>
     getCurrentMonday(new Date()),
   );
@@ -36,6 +34,14 @@ const Sessions = () => {
 
   const courses = getCoursesFromInstructionSessions(instructionSessions);
 
+  const filteredSessions =
+    selectedCourseCodes.length > 0
+      ? filterInstructionSessionsByCourses(
+          instructionSessions ?? [],
+          (course) => selectedCourseCodes.includes(course.code),
+        )
+      : instructionSessions;
+
   return (
     <>
       <Typography component="h1" variant="h4" mb={2}>
@@ -49,14 +55,23 @@ const Sessions = () => {
               <CourseChip
                 key={course.id}
                 course={course}
-                sx={{ mr: 1, mb: 1 }}
+                sx={{
+                  mr: 1,
+                  mb: 1,
+                  opacity:
+                    selectedCourseCodes.length === 0 ||
+                    selectedCourseCodes.includes(course.code)
+                      ? 1
+                      : 0.5,
+                }}
+                onClick={() => toggleCourseCode(course.code)}
               />
             ))}
           </Box>
 
           <SessionCalendar
             firstDate={firstDate}
-            instructionSessions={instructionSessions ?? []}
+            instructionSessions={filteredSessions ?? []}
             onPreviousWeek={() => setFirstDate(getPreviousMonday(firstDate))}
             onNextWeek={() => setFirstDate(getNextMonday(firstDate))}
           />

@@ -9,7 +9,7 @@ const useQueryParams = () => {
     const urlParams = new URLSearchParams(search);
 
     return fromPairs(Array.from(urlParams.entries()));
-  }, search);
+  }, [search]);
 
   return params;
 };
