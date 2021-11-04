@@ -1,5 +1,5 @@
 import stringToColor from 'string-to-color';
 
-const getCourseColor = (course) => stringToColor(course.code);
+const getCourseColor = (course) => stringToColor(course.id);
 
 export default getCourseColor;
