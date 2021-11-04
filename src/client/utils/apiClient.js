@@ -1,29 +1,12 @@
 import axios from 'axios';
 import { BASE_PATH, IN_PRODUCTION } from '../config';
-import storage from './storage';
+import mockUserService from './mockUserService';
+import loginAsService from './loginAsService';
 
-const FALLBACK_DEVELOPMENT_USER_HEADERS = {
-  uid: 'mluukkai',
-  givenname: 'Matti',
-  sn: 'Luukkainen',
-  mail: 'matti.luukkainen@helsinki.fi',
-};
+const getUserHeaders = () =>
+  IN_PRODUCTION ? {} : mockUserService.getHeaders();
 
-const getUserHeaders = () => {
-  if (IN_PRODUCTION) {
-    return {};
-  }
-
-  return (
-    storage.get('developmentUserHeaders') ?? FALLBACK_DEVELOPMENT_USER_HEADERS
-  );
-};
-
-const getLoggedInAsHeaders = () => {
-  const loggedInAs = storage.get('adminLoggedInAs');
-
-  return loggedInAs ? { 'x-admin-logged-in-as': loggedInAs } : {};
-};
+const getLoggedInAsHeaders = () => loginAsService.getHeaders();
 
 const apiClient = axios.create({ baseURL: `${BASE_PATH}/api` });
 

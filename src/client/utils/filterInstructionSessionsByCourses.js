@@ -1,4 +1,4 @@
-const filterInstructionSessionCourses = (sessions, fn) => {
+const filterInstructionSessionsByCourses = (sessions, filterFn) => {
   const filteredSessions = sessions
     .map((session) => ({
       ...session,
@@ -6,7 +6,7 @@ const filterInstructionSessionCourses = (sessions, fn) => {
         ? {
             ...session.user,
             competenceCourses: session.user.competenceCourses.filter((course) =>
-              fn(course),
+              filterFn(course),
             ),
           }
         : null,
@@ -16,4 +16,4 @@ const filterInstructionSessionCourses = (sessions, fn) => {
   return filteredSessions;
 };
 
-export default filterInstructionSessionCourses;
+export default filterInstructionSessionsByCourses;

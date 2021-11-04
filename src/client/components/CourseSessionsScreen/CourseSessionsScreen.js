@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 
 import usePublicInstructionSessions from '../../hooks/usePublicInstructionSessions';
 import { getCurrentMonday } from '../../utils/date';
-import filterInstructionSessionsByCourseId from '../../utils/filterInstructionSessionsByCourseId';
+import filterInstructionSessionsByCourses from '../../utils/filterInstructionSessionsByCourses';
 import SessionCalendar from '../SessionCalendar';
 import ScreenContainer from '../ScreenContainer';
 import useCourse from '../../hooks/useCourse';
@@ -50,9 +50,9 @@ const CourseSessionsScreen = () => {
     );
   }
 
-  const courseInstructionSessions = filterInstructionSessionsByCourseId(
+  const courseInstructionSessions = filterInstructionSessionsByCourses(
     instructionSessions ?? [],
-    course.id,
+    (c) => c.id === course.id,
   );
 
   return (

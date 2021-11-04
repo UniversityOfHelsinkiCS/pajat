@@ -21,5 +21,6 @@ module.exports = {
     'no-restricted-syntax': 'off',
     'no-await-in-loop': 'off',
     'max-classes-per-file': 'off',
+    'class-methods-use-this': 'off',
   },
 };

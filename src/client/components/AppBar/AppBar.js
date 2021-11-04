@@ -7,9 +7,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import useAuthorizedUser from '../../hooks/useAuthorizedUser';
 import Drawer from './Drawer';
 import Logo from './Logo';
+import loginAsService from '../../utils/loginAsService';
 
 const AppBar = () => {
   const { authorizedUser } = useAuthorizedUser();
+  const isLoginAs = Boolean(loginAsService.getUsername());
+
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
@@ -26,6 +29,7 @@ const AppBar = () => {
               onClick={() => setDrawerOpen(true)}
             >
               {authorizedUser.displayName}
+              {isLoginAs && <> (login as)</>}
             </Button>
           )}
         </Toolbar>

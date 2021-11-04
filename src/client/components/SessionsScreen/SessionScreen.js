@@ -7,7 +7,7 @@ import usePublicInstructionSessions from '../../hooks/usePublicInstructionSessio
 import { getCurrentMonday } from '../../utils/date';
 
 import getCoursesFromInstructionSessions from '../../utils/getCoursesFromInstructionSessions';
-import filterInstructionSessionsCourses from '../../utils/filterInstructionSessionsCourses';
+import filterInstructionSessionsByCourses from '../../utils/filterInstructionSessionsByCourses';
 import CourseChip from '../CourseChip';
 import SessionCalendar from '../SessionCalendar';
 import ScreenContainer from '../ScreenContainer';
@@ -40,8 +40,9 @@ const SessionScreen = () => {
 
   const filteredInstructionSessions =
     courseCodes.length > 0
-      ? filterInstructionSessionsCourses(instructionSessions ?? [], (course) =>
-          courseCodes.includes(course.code),
+      ? filterInstructionSessionsByCourses(
+          instructionSessions ?? [],
+          (course) => courseCodes.includes(course.code),
         )
       : instructionSessions;
 

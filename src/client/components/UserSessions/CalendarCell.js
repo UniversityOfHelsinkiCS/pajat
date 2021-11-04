@@ -1,5 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { ButtonBase, Menu, MenuItem } from '@mui/material';
+
+import {
+  ButtonBase,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
+
+import DeleteIcon from '@mui/icons-material/Delete';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { isPast, endOfDay } from 'date-fns';
@@ -45,7 +54,12 @@ const SessionTimeCell = ({ session, disabled, onDelete }) => {
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
       >
-        <MenuItem onClick={handleDelete}>Remove session</MenuItem>
+        <MenuItem onClick={handleDelete}>
+          <ListItemIcon>
+            <DeleteIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Delete session</ListItemText>
+        </MenuItem>
       </Menu>
 
       <BaseSessionTimeCell
