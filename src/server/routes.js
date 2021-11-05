@@ -46,6 +46,10 @@ router.delete(
   controllers.deleteInstructionSession,
 );
 
+router.get('/instruction-sessions/:id', controllers.getInstructionSession);
+
+router.put('/instruction-sessions/:id', controllers.updateInstructionSession);
+
 router.get(
   '/instructor-invitation-token',
   controllers.getInstructorInvitationToken,

@@ -59,6 +59,11 @@ export const getInitialValues = ({ date, hour, instructionLocations }) => {
   return initialValues;
 };
 
+export const getUpdateInitialValues = (session) => ({
+  instructionLocationId: session?.instructionLocationId,
+  description: session?.description ?? '',
+});
+
 export const validate = (values) => {
   const { sessionDate, startTime, endTime, repeat, instructionLocationId } =
     values;

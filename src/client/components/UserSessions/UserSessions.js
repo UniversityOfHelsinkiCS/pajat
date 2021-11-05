@@ -7,8 +7,8 @@ import CreateSessionDialog from './CreateSessionDialog';
 import useCreateInstructionSession from '../../hooks/useCreateInstructionSession';
 import CalendarCell from './CalendarCell';
 import useMyInstructionSessions from '../../hooks/useMyInstructionSessions';
-import useDeleteInstructionSession from '../../hooks/useDeleteInstructionSession';
 import useInstructionLocations from '../../hooks/useInstructionLocations';
+import UpdateSessionDialog from './UpdateSessionDialog';
 
 import {
   getPreviousMonday,
@@ -38,9 +38,6 @@ const UserSessions = () => {
   const { mutateAsync: createInstructionSession } =
     useCreateInstructionSession();
 
-  const { mutateAsync: deleteInstructionSession } =
-    useDeleteInstructionSession();
-
   const [selectedTime, setSelectedTime] = useState({ date: null, hour: null });
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -55,17 +52,7 @@ const UserSessions = () => {
     setDialogOpen(true);
   };
 
-  const handleDeleteSession = async (session) => {
-    try {
-      await deleteInstructionSession(session.id);
-      refetch();
-      enqueueSnackbar('Session has been removed', { variant: 'success' });
-    } catch (e) {
-      enqueueSnackbar('Something went wrong', { variant: 'error' });
-    }
-  };
-
-  const onSubmit = async (values) => {
+  const handleCreateSession = async (values) => {
     const session = getInstructionSessionFromValues(values);
 
     try {
@@ -82,6 +69,8 @@ const UserSessions = () => {
 
   return (
     <>
+      <UpdateSessionDialog onRefetch={refetch} />
+
       <Typography component="h1" variant="h4" mb={2}>
         My sessions
       </Typography>
@@ -100,7 +89,6 @@ const UserSessions = () => {
                 hour={hour}
                 instructionSessions={instructionSessions ?? []}
                 onNew={() => handleNewSession(date, hour)}
-                onDelete={handleDeleteSession}
               />
             )}
           />
@@ -109,9 +97,8 @@ const UserSessions = () => {
 
       <CreateSessionDialog
         initialValues={initialValues}
-        onSubmit={onSubmit}
+        onSubmit={handleCreateSession}
         open={dialogOpen}
-        instructionLocations={instructionLocations ?? []}
         onClose={() => setDialogOpen(false)}
       />
     </>

@@ -1,14 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 
-import {
-  ButtonBase,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
+import { ButtonBase } from '@mui/material';
 
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { isPast, endOfDay } from 'date-fns';
@@ -38,40 +32,15 @@ const BaseSessionTimeCell = styled(CalendarEvent)`
   height: 100%;
 `;
 
-const SessionTimeCell = ({ session, disabled, onDelete }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const cellRef = useRef();
+const SessionTimeCell = ({ session, disabled }) => (
+  <BaseSessionTimeCell
+    component={Link}
+    to={`.?instructionSessionId=${session.id}`}
+    disabled={disabled}
+  />
+);
 
-  const handleDelete = () => {
-    onDelete(session);
-    setMenuOpen(false);
-  };
-
-  return (
-    <>
-      <Menu
-        anchorEl={cellRef.current}
-        open={menuOpen}
-        onClose={() => setMenuOpen(false)}
-      >
-        <MenuItem onClick={handleDelete}>
-          <ListItemIcon>
-            <DeleteIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Delete session</ListItemText>
-        </MenuItem>
-      </Menu>
-
-      <BaseSessionTimeCell
-        ref={cellRef}
-        disabled={disabled}
-        onClick={() => setMenuOpen(true)}
-      />
-    </>
-  );
-};
-
-const CalendarCell = ({ date, hour, onNew, onDelete, instructionSessions }) => {
+const CalendarCell = ({ date, hour, onNew, instructionSessions }) => {
   const disabled = isPast(endOfDay(date));
 
   const session = instructionSessions.find((s) =>
@@ -80,12 +49,7 @@ const CalendarCell = ({ date, hour, onNew, onDelete, instructionSessions }) => {
 
   if (session) {
     return (
-      <SessionTimeCell
-        session={session}
-        disabled={disabled}
-        onDelete={onDelete}
-        focusRipple
-      />
+      <SessionTimeCell session={session} disabled={disabled} focusRipple />
     );
   }
 
