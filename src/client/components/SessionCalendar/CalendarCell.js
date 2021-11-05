@@ -30,7 +30,7 @@ const CalendarCell = ({ date, hour, instructionSessions }) => {
       />
       <CalendarEvent
         sx={{ p: 0.5 }}
-        onClick={() => setDialogOpen(true)}
+        onClick={() => setDialogOpen(false)}
         focusRipple
       >
         {courses.map((course) => (

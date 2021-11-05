@@ -52,15 +52,15 @@ window.__mockUser__.setUser({
 
 The mock user will be stored into the local storage.
 
-## Logging in as another user
+## Admin login as
 
-You can login as any user by calling `window.__loginAs__.login` in the browser's developer tool's console. For example:
+As an admin user, you can login as any other user by calling `window.__loginAs__.login` in the browser's developer tool's console. For example:
 
 ```javascript
 window.__loginAs__.login('kalleilv');
 ```
 
-This works both in developement and production environments. The logged in as user will be stored into the local storage. If you want to return to your user, call `window.__loginAs__.clear`. For example:
+This works both in developement and production environments. The login as user will be stored into the local storage. If you want to return to your own user, call `window.__loginAs__.clear`. For example:
 
 ```javascript
 window.__loginAs__.clear();
@@ -84,10 +84,6 @@ A calendar can be embedded into a website using a [<iframe>](https://developer.m
   style="border: 0px; width: 100%; height: 600px;"
 ></iframe>
 ```
-
-## Documentation
-
-TODO
 
 ## Maintainers and Contribution
 
