@@ -9,9 +9,9 @@ import {
   Button,
   Box,
   Typography,
+  Divider,
 } from '@mui/material';
 
-import styled from '@emotion/styled';
 import InfoIcon from '@mui/icons-material/Info';
 import LocationIcon from '@mui/icons-material/Room';
 
@@ -28,40 +28,18 @@ const InfoItem = ({ icon, children }) => (
   </Box>
 );
 
-const InstructorList = styled.dl`
-  display: grid;
-  grid-template-columns: auto 1fr;
-  margin: 0px;
-
-  dt {
-    padding-right: ${({ theme }) => theme.spacing(2)};
-    grid-column: 1;
-    margin: 0px;
-  }
-
-  dd {
-    grid-column: 2;
-    margin: 0px;
-    margin-bottom: ${({ theme }) => theme.spacing(2)};
-  }
-
-  dd:last-child {
-    margin-bottom: 0px;
-  }
-`;
-
-const InstructorItem = ({ user }) => {
+const InstructorItem = ({ user, divider = true }) => {
   const { displayName, competenceCourses, instructionSessions } = user;
 
   const { description, instructionLocation } = instructionSessions[0];
 
   return (
     <>
-      <Typography variant="body1" fontWeight="medium" component="dt">
+      <Typography variant="body1" fontWeight="medium" mb={1}>
         {displayName}
       </Typography>
 
-      <dd>
+      <div>
         {competenceCourses.map((course) => (
           <CourseChip
             course={course}
@@ -70,19 +48,19 @@ const InstructorItem = ({ user }) => {
             sx={{ mr: 1, mb: 1 }}
           />
         ))}
+      </div>
 
-        {instructionLocation && (
-          <InfoItem icon={<LocationIcon />}>
-            {instructionLocation.name}
-          </InfoItem>
-        )}
+      {instructionLocation && (
+        <InfoItem icon={<LocationIcon />}>{instructionLocation.name}</InfoItem>
+      )}
 
-        {description && (
-          <InfoItem icon={<InfoIcon />}>
-            <Markdown allowedElements={['p', 'a']}>{description}</Markdown>
-          </InfoItem>
-        )}
-      </dd>
+      {description && (
+        <InfoItem icon={<InfoIcon />}>
+          <Markdown allowedElements={['p', 'a']}>{description}</Markdown>
+        </InfoItem>
+      )}
+
+      {divider && <Divider sx={{ my: 2 }} />}
     </>
   );
 };
@@ -105,11 +83,14 @@ const SessionInstructorsDialog = ({
       </DialogTitle>
       <DialogContent>
         <Box mb={2}>These instructors are present during this session:</Box>
-        <InstructorList>
-          {users.map((user) => (
-            <InstructorItem key={user.id} user={user} />
-          ))}
-        </InstructorList>
+
+        {users.map((user, index) => (
+          <InstructorItem
+            key={user.id}
+            user={user}
+            divider={index < users.length - 1}
+          />
+        ))}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
