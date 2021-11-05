@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from 'react-query';
 
@@ -9,7 +9,7 @@ import PageProgress from './PageProgress';
 const InstructorInvitation = () => {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { token } = useParams();
   const { mutateAsync } = useClaimInstructorAccess();
 
@@ -27,7 +27,7 @@ const InstructorInvitation = () => {
       );
     }
 
-    history.replace('/');
+    navigate('/');
   }, [token]);
 
   return <PageProgress />;

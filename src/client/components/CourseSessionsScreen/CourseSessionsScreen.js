@@ -2,7 +2,7 @@ import React from 'react';
 import { startOfWeek, endOfWeek } from 'date-fns';
 import { Typography, Alert } from '@mui/material';
 
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import usePublicInstructionSessions from '../../hooks/usePublicInstructionSessions';
 import { getCurrentMonday } from '../../utils/date';
@@ -11,7 +11,6 @@ import SessionCalendar from '../SessionCalendar';
 import ScreenContainer from '../ScreenContainer';
 import useCourse from '../../hooks/useCourse';
 import PageProgress from '../PageProgress';
-import useQueryParams from '../../hooks/useQueryParams';
 import usePageReloadTimeout from '../../hooks/usePageReloadTimeout';
 
 const getQueryOptions = (date) => ({
@@ -25,12 +24,12 @@ const CourseSessionsScreen = () => {
   usePageReloadTimeout(RELOAD_INTERVAL);
 
   const { code } = useParams();
-  const query = useQueryParams();
+  const [searchParams] = useSearchParams();
 
   const firstDate = getCurrentMonday(new Date());
   const normalizedCode = code.toUpperCase();
-  const dense = query.dense !== 'false';
-  const showCourseName = query.showCourseName === 'true';
+  const dense = searchParams.get('dense') !== 'false';
+  const showCourseName = searchParams.get('showCourseName') === 'true';
 
   const { instructionSessions } = usePublicInstructionSessions(
     getQueryOptions(firstDate),

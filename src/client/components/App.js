@@ -1,11 +1,11 @@
 import React, { Suspense } from 'react';
 
-import Router from './Router';
+import Routes from './Routes';
 import PageProgress from './PageProgress';
 
 const App = () => (
   <Suspense fallback={<PageProgress />}>
-    <Router />
+    <Routes />
   </Suspense>
 );
 

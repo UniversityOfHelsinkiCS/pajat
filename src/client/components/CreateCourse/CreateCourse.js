@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Card, CardContent } from '@mui/material';
 import { Formik } from 'formik';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 import useCreateCourse from '../../hooks/useCreateCourse';
@@ -23,14 +23,14 @@ const validate = (values) => {
 
 const CreateCourse = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const history = useHistory();
+  const navigate = useNavigate();
   const { mutateAsync } = useCreateCourse();
 
   const onSubmit = async (values) => {
     try {
       await mutateAsync(values);
       enqueueSnackbar('Courses has been added', { variant: 'success' });
-      history.push('/courses');
+      navigate('/courses');
     } catch (e) {
       enqueueSnackbar('Something went wrong', { variant: 'error' });
     }

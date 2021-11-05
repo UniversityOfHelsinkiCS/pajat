@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Typography, Card, CardContent, Box } from '@mui/material';
+import { Typography, Card, CardContent, Box, Chip } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
 
 import useInstructionSessions from '../../hooks/useInstructionSessions';
 
@@ -17,7 +18,8 @@ import PageProgress from '../PageProgress';
 import { getQueryOptions, useSelectedCourseCodes } from './utils';
 
 const Sessions = () => {
-  const { selectedCourseCodes, toggleCourseCode } = useSelectedCourseCodes();
+  const { selectedCourseCodes, toggleCourseCode, clearCourseCodes } =
+    useSelectedCourseCodes();
 
   const [firstDate, setFirstDate] = useState(() =>
     getCurrentMonday(new Date()),
@@ -67,6 +69,15 @@ const Sessions = () => {
                 onClick={() => toggleCourseCode(course.code)}
               />
             ))}
+            {selectedCourseCodes.length > 0 && (
+              <Chip
+                icon={<ClearIcon />}
+                label="Clear filters"
+                variant="outlined"
+                sx={{ mr: 1, mb: 1 }}
+                onClick={() => clearCourseCodes()}
+              />
+            )}
           </Box>
 
           <SessionCalendar

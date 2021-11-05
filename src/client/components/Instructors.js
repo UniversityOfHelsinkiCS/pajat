@@ -13,7 +13,7 @@ import {
   Button,
 } from '@mui/material';
 
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 import useInstructors from '../hooks/useInstructors';
@@ -41,7 +41,7 @@ const Instructors = () => {
   }
 
   if (!instructors) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   const handleCopyLink = () => {

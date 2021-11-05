@@ -9,7 +9,7 @@ import {
   Switch,
 } from '@mui/material';
 
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 import useAuthorizedUser from '../hooks/useAuthorizedUser';
@@ -77,7 +77,7 @@ const Profile = () => {
   }
 
   if (!authorizedUser || !courses) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   const { competenceCourses } = authorizedUser;

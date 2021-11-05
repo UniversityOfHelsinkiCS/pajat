@@ -1,7 +1,5 @@
 import { startOfWeek, endOfWeek } from 'date-fns';
-import { useHistory } from 'react-router-dom';
-
-import useQueryParams from '../../hooks/useQueryParams';
+import { useSearchParams } from 'react-router-dom';
 
 export const getQueryOptions = (date) => ({
   from: startOfWeek(date),
@@ -9,13 +7,16 @@ export const getQueryOptions = (date) => ({
 });
 
 export const useSelectedCourseCodes = () => {
-  const query = useQueryParams();
-  const history = useHistory();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const selectedCourseCodes = (query.courseCodes ?? '')
+  const selectedCourseCodes = (searchParams.get('courseCodes') ?? '')
     .split(',')
     .filter(Boolean)
     .map((code) => code.toUpperCase());
+
+  const clearCourseCodes = () => {
+    setSearchParams({});
+  };
 
   const toggleCourseCode = (code) => {
     const nextCourseCodes = selectedCourseCodes.includes(code)
@@ -23,17 +24,11 @@ export const useSelectedCourseCodes = () => {
       : [...selectedCourseCodes, code];
 
     if (nextCourseCodes.length > 0) {
-      history.push({
-        pathname: '/',
-        search: `?courseCodes=${nextCourseCodes.join(',')}`,
-      });
+      setSearchParams({ courseCodes: nextCourseCodes.join(',') });
     } else {
-      history.push({
-        pathname: '/',
-        search: '',
-      });
+      clearCourseCodes();
     }
   };
 
-  return { selectedCourseCodes, toggleCourseCode };
+  return { selectedCourseCodes, toggleCourseCode, clearCourseCodes };
 };

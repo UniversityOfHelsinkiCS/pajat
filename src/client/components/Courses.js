@@ -13,7 +13,7 @@ import {
   Button,
 } from '@mui/material';
 
-import { Redirect, Link } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 
 import useCourses from '../hooks/useCourses';
 import useAuthorizedUser from '../hooks/useAuthorizedUser';
@@ -28,7 +28,7 @@ const Courses = () => {
   }
 
   if (!courses) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   return (
