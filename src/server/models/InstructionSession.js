@@ -3,6 +3,7 @@ const { Model } = require('objection');
 const knex = require('../utils/knex');
 const BaseModel = require('./BaseModel');
 const User = require('./User');
+const InstructionLocation = require('./InstructionLocation');
 
 const getTimeStringFromHour = (hour) =>
   `${hour.toString().padStart('0', 2)}:00`;
@@ -24,6 +25,14 @@ class InstructionSession extends BaseModel {
         join: {
           from: 'instructionSessions.userId',
           to: 'users.id',
+        },
+      },
+      instructionLocation: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: InstructionLocation,
+        join: {
+          from: 'instructionSessions.instructionLocationId',
+          to: 'instructionLocations.id',
         },
       },
     };

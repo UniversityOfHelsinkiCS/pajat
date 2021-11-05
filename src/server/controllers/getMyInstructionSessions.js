@@ -26,7 +26,8 @@ const getMyInstructionSessions = async (req, res) => {
       userId: user.id,
     })
     .andWhere('sessionDate', '>=', from)
-    .andWhere('sessionDate', '<=', to);
+    .andWhere('sessionDate', '<=', to)
+    .withGraphFetched('instructionLocation');
 
   res.send(instructionSessions);
 };

@@ -12,7 +12,14 @@ export const getQueryOptions = (date) => ({
 });
 
 export const getInstructionSessionFromValues = (values) => {
-  const { sessionDate, startTime, endTime, repeat } = values;
+  const {
+    sessionDate,
+    startTime,
+    endTime,
+    repeat,
+    description,
+    instructionLocationId,
+  } = values;
 
   const startHour = getHours(startTime);
   const endHour = getHours(endTime);
@@ -24,13 +31,17 @@ export const getInstructionSessionFromValues = (values) => {
     endHour,
     sessionDate: normalizedSessionDate,
     repeat: normalizedRepeat,
+    description,
+    instructionLocationId,
   };
 };
 
-export const getInitialValues = (date, hour) => {
+export const getInitialValues = ({ date, hour, instructionLocations }) => {
   const initialValues = {
     sessionDate: date,
     repeat: '1',
+    description: '',
+    instructionLocationId: instructionLocations[0]?.id,
     startTime: date
       ? setDate(date, {
           hours: hour,
@@ -49,7 +60,9 @@ export const getInitialValues = (date, hour) => {
 };
 
 export const validate = (values) => {
-  const { sessionDate, startTime, endTime, repeat } = values;
+  const { sessionDate, startTime, endTime, repeat, instructionLocationId } =
+    values;
+
   const normalizedRepeat = repeat ? parseInt(repeat, 10) : null;
 
   const errors = {};
@@ -66,8 +79,8 @@ export const validate = (values) => {
     errors.endTime = 'End time is required';
   }
 
-  if (!repeat) {
-    errors.repeat = 'Weekly repeat times is required';
+  if (!instructionLocationId) {
+    errors.instructionLocationId = 'Location is required';
   }
 
   if (normalizedRepeat && (repeat < 1 || repeat > 48)) {

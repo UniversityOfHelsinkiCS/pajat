@@ -53,6 +53,8 @@ router.get(
 
 router.post('/claim-instructor-access', controllers.claimInstructorAccess);
 
+router.get('/instruction-locations', controllers.getInstructionLocations);
+
 router.use(errorHandler);
 
 module.exports = router;

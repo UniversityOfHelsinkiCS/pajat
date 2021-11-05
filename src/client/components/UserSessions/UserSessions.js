@@ -8,6 +8,7 @@ import useCreateInstructionSession from '../../hooks/useCreateInstructionSession
 import CalendarCell from './CalendarCell';
 import useMyInstructionSessions from '../../hooks/useMyInstructionSessions';
 import useDeleteInstructionSession from '../../hooks/useDeleteInstructionSession';
+import useInstructionLocations from '../../hooks/useInstructionLocations';
 
 import {
   getPreviousMonday,
@@ -30,6 +31,8 @@ const UserSessions = () => {
     getQueryOptions(firstDate),
   );
 
+  const { instructionLocations } = useInstructionLocations();
+
   const { enqueueSnackbar } = useSnackbar();
 
   const { mutateAsync: createInstructionSession } =
@@ -41,7 +44,11 @@ const UserSessions = () => {
   const [selectedTime, setSelectedTime] = useState({ date: null, hour: null });
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const initialValues = getInitialValues(selectedTime.date, selectedTime.hour);
+  const initialValues = getInitialValues({
+    date: selectedTime.date,
+    hour: selectedTime.hour,
+    instructionLocations: instructionLocations ?? [],
+  });
 
   const handleNewSession = (date, hour) => {
     setSelectedTime({ date, hour });
@@ -104,6 +111,7 @@ const UserSessions = () => {
         initialValues={initialValues}
         onSubmit={onSubmit}
         open={dialogOpen}
+        instructionLocations={instructionLocations ?? []}
         onClose={() => setDialogOpen(false)}
       />
     </>

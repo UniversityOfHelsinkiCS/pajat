@@ -12,6 +12,7 @@ const claimInstructorAccess = require('./claimInstructorAccess');
 const getInstructors = require('./getInstructors');
 const getPublicInstructionSessions = require('./getPublicInstructionSessions');
 const getCourse = require('./getCourse');
+const getInstructionLocations = require('./getInstructionLocations');
 
 module.exports = {
   getAuthorizedUser,
@@ -28,4 +29,5 @@ module.exports = {
   getInstructors,
   getPublicInstructionSessions,
   getCourse,
+  getInstructionLocations,
 };

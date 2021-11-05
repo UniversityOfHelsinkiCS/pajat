@@ -12,9 +12,21 @@ import {
 } from '@mui/material';
 
 import styled from '@emotion/styled';
+import InfoIcon from '@mui/icons-material/Info';
+import LocationIcon from '@mui/icons-material/Room';
 
 import getUsersFromInstructionSessions from '../utils/getUsersFromInstructionSessions';
 import CourseChip from './CourseChip';
+import Markdown from './Markdown';
+
+const InfoItem = ({ icon, children }) => (
+  <Box display="flex">
+    <Box flexGrow={0} mr={1} sx={{ color: 'grey.500' }}>
+      {icon}
+    </Box>
+    <Box flexGrow={1}>{children}</Box>
+  </Box>
+);
 
 const InstructorList = styled.dl`
   display: grid;
@@ -38,24 +50,42 @@ const InstructorList = styled.dl`
   }
 `;
 
-const InstructorItem = ({ user }) => (
-  <>
-    <Typography variant="body1" fontWeight="medium" component="dt">
-      {user.displayName}
-    </Typography>
+const InstructorItem = ({ user }) => {
+  const { displayName, competenceCourses, instructionSessions } = user;
 
-    <dd>
-      {user.competenceCourses.map((course) => (
-        <CourseChip
-          course={course}
-          size="small"
-          key={course.id}
-          sx={{ mr: 1, mb: 1 }}
-        />
-      ))}
-    </dd>
-  </>
-);
+  const { description, instructionLocation } = instructionSessions[0];
+
+  return (
+    <>
+      <Typography variant="body1" fontWeight="medium" component="dt">
+        {displayName}
+      </Typography>
+
+      <dd>
+        {competenceCourses.map((course) => (
+          <CourseChip
+            course={course}
+            size="small"
+            key={course.id}
+            sx={{ mr: 1, mb: 1 }}
+          />
+        ))}
+
+        {instructionLocation && (
+          <InfoItem icon={<LocationIcon />}>
+            {instructionLocation.name}
+          </InfoItem>
+        )}
+
+        {description && (
+          <InfoItem icon={<InfoIcon />}>
+            <Markdown allowedElements={['p', 'a']}>{description}</Markdown>
+          </InfoItem>
+        )}
+      </dd>
+    </>
+  );
+};
 
 const SessionInstructorsDialog = ({
   instructionSessions,

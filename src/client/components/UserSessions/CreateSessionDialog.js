@@ -14,7 +14,13 @@ import { Formik } from 'formik';
 import CreateSessionForm from './CreateSessionForm';
 import { validate } from './utils';
 
-const CreateSessionDialog = ({ open, onClose, initialValues, onSubmit }) => (
+const CreateSessionDialog = ({
+  open,
+  onClose,
+  initialValues,
+  onSubmit,
+  instructionLocations,
+}) => (
   <Formik
     onSubmit={onSubmit}
     initialValues={initialValues}
@@ -26,7 +32,7 @@ const CreateSessionDialog = ({ open, onClose, initialValues, onSubmit }) => (
         <DialogTitle>Add session</DialogTitle>
         <DialogContent>
           <Box mt={1}>
-            <CreateSessionForm />
+            <CreateSessionForm instructionLocations={instructionLocations} />
           </Box>
         </DialogContent>
         <DialogActions>

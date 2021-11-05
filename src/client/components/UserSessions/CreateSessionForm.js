@@ -1,11 +1,12 @@
 import React from 'react';
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, MenuItem } from '@mui/material';
 import { format as formatDate, addWeeks } from 'date-fns';
 import { useField } from 'formik';
 
 import FormikDatePicker from '../FormikDatePicker';
 import FormikTimePicker from '../FormikTimePicker';
 import FormikTextField from '../FormikTextField';
+import FormikSelect from '../FormikSelect';
 
 const getRepeatHelperText = (sessionDate, repeat) => {
   if (!sessionDate || !repeat) {
@@ -19,7 +20,7 @@ const getRepeatHelperText = (sessionDate, repeat) => {
   return `Repeats weekly until ${formatDate(lastSessionDate, 'd.M.')}`;
 };
 
-const CreateSessionForm = () => {
+const CreateSessionForm = ({ instructionLocations }) => {
   const [sessionDateField] = useField('sessionDate');
   const [repeatField] = useField('repeat');
 
@@ -62,6 +63,31 @@ const CreateSessionForm = () => {
             />
           </Grid>
         </Grid>
+      </Box>
+
+      <Box mb={2}>
+        <FormikSelect
+          label="Location"
+          name="instructionLocationId"
+          helperText="If you choose a remote location, please add details such as a link to the description"
+          fullWidth
+        >
+          {instructionLocations.map((location) => (
+            <MenuItem value={location.id} key={location.id}>
+              {location.name}
+            </MenuItem>
+          ))}
+        </FormikSelect>
+      </Box>
+
+      <Box mb={2}>
+        <FormikTextField
+          label="Description"
+          name="description"
+          multiline
+          helperText="Description supports markdown links"
+          fullWidth
+        />
       </Box>
 
       <FormikTextField

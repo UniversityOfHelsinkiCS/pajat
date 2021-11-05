@@ -22,7 +22,7 @@ const getPublicInstructionSessions = async (req, res) => {
   const instructionSessions = await InstructionSession.query()
     .andWhere('sessionDate', '>=', from)
     .andWhere('sessionDate', '<=', to)
-    .withGraphFetched('user.competenceCourses');
+    .withGraphFetched('[user.competenceCourses,instructionLocation]');
 
   res.send(instructionSessions);
 };

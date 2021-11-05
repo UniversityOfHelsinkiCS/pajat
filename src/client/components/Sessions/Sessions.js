@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
-import { Typography, Card, CardContent, Box, Chip } from '@mui/material';
+
+import {
+  Typography,
+  Card,
+  CardContent,
+  Box,
+  Chip,
+  Button,
+} from '@mui/material';
+
 import ClearIcon from '@mui/icons-material/Clear';
+import { Link } from 'react-router-dom';
 
 import useInstructionSessions from '../../hooks/useInstructionSessions';
 
@@ -16,8 +26,11 @@ import CourseChip from '../CourseChip';
 import SessionCalendar from '../SessionCalendar';
 import PageProgress from '../PageProgress';
 import { getQueryOptions, useSelectedCourseCodes } from './utils';
+import useAuthorizedUser from '../../hooks/useAuthorizedUser';
 
 const Sessions = () => {
+  const { authorizedUser } = useAuthorizedUser();
+
   const { selectedCourseCodes, toggleCourseCode, clearCourseCodes } =
     useSelectedCourseCodes();
 
@@ -46,9 +59,19 @@ const Sessions = () => {
 
   return (
     <>
-      <Typography component="h1" variant="h4" mb={2}>
-        Sessions
-      </Typography>
+      <Box mb={2} display="flex" justifyContent="center">
+        <Typography component="h1" variant="h4" flexGrow={1}>
+          Sessions
+        </Typography>
+
+        {authorizedUser?.instructorAccess && (
+          <div>
+            <Button variant="contained" component={Link} to="/my-sessions">
+              Add session
+            </Button>
+          </div>
+        )}
+      </Box>
 
       <Card>
         <CardContent>

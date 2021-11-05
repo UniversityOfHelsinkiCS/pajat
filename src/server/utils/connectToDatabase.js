@@ -15,7 +15,12 @@ const runMigrations = async () => {
 
 const testConnection = async () => {
   await knex.raw('SELECT 1 as test');
-  await runMigrations();
+  try {
+    await runMigrations();
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
 };
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
