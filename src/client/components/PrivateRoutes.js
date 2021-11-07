@@ -42,7 +42,7 @@ const PrivateRoutes = () => {
   return (
     <>
       <AppBar />
-      <Container sx={{ my: 2 }}>
+      <Container sx={{ my: 3 }}>
         <Suspense fallback={<PageProgress />}>
           <RoutesConfig />
         </Suspense>

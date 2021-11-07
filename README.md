@@ -68,22 +68,23 @@ window.__loginAs__.clear();
 
 ## Embedded calendars
 
-There's an embedded view for multiple and single courses. Both views will automatically refresh themselves with a sensible interval.
+There's an embedded view for multiple and single courses. The multiple courses view is at https://study.cs.helsinki.fi/pajat2/public/screen. The single course view is at path `/pajat2/public/screen/:courseCode` where `:courseCode` is the course's course code. For example https://study.cs.helsinki.fi/pajat2/public/screen/tkt20002
 
-Multiple courses view is at https://study.cs.helsinki.fi/pajat2/public/screen. You can choose the displayed courses by providing a `courseCodes` query parameter with the course codes separated by a comma. For example https://study.cs.helsinki.fi/pajat2/public/screen?courseCodes=tkt20002,tkt20006.
-
-The single course view is at path `/pajat2/public/screen/:courseCode` where `:courseCode` is the course's course code. For example https://study.cs.helsinki.fi/pajat2/public/screen/tkt20002. If you want to display the course's name you can set the `showCourseName` query parameter as `true`. For example https://study.cs.helsinki.fi/pajat2/public/screen/tkt20002?showCourseName=true.
-
-Both views accept a `dense` query parameter which, if set to `false` will add small padding for the view. For example https://study.cs.helsinki.fi/pajat2/public/screen?courseCodes=tkt20002&dense=false.
-
-A calendar can be embedded into a website using a [<iframe>](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe) tag. For example:
+A calendar can be embedded into a website using a [<iframe>](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe) element. For example:
 
 ```html
-<iframe
-  src="https://study.cs.helsinki.fi/pajat2/public/screen/tkt20002"
-  style="border: 0px; width: 100%; height: 600px;"
-></iframe>
+<iframe loading="lazy" width="100%" height="500" src="http://localhost:3000/public/screen/tkt20006" style="border: 0"></iframe>
 ```
+
+### Query parameters
+
+You can alter views by using query parameters. The available parameters are described below.
+
+| Name  | Description | Default value | Example
+| --- | --- | --- | --- |
+| `controls` | Show week selection controls | `true` | [Example](https://study.cs.helsinki.fi/pajat2/public/screen?controls=false)
+| `gutters`      | Add some space around the view | `false` when within iframe, otherwise `true` | [Example](https://study.cs.helsinki.fi/pajat2/public/screen?gutters=false)
+| `courseCodes`      | **Only available in the multiple courses view.**<br />List of shown courses' codes separated by comma. The list of avaible course can be found [here](https://study.cs.helsinki.fi/pajat2/courses) | No default value, all courses are shown | [Example](https://study.cs.helsinki.fi/pajat2/public/screen?courseCodes=tkt20002,tkt20006)
 
 ## Maintainers and Contribution
 

@@ -74,8 +74,8 @@ const WeekSelect = ({ firstDate, lastDate, onPreviousWeek, onNextWeek }) => (
       </Tooltip>
     </Box>
 
-    <Typography flexGrow={1} variant="h6" align="center">
-      {formatDate(firstDate, 'dd.MM.')} - {formatDate(lastDate, 'dd.MM.')}
+    <Typography flexGrow={1} variant="h6" component="div" align="center">
+      {formatDate(firstDate, 'd.M.')} - {formatDate(lastDate, 'd.M.')}
     </Typography>
 
     <Box flexGrow={0}>
@@ -113,14 +113,12 @@ const WeekCalendar = ({
   return (
     <>
       {onNextWeek && onPreviousWeek && (
-        <Box mb={1}>
-          <WeekSelect
-            firstDate={firstWeekDate}
-            lastDate={lastWeekDate}
-            onPreviousWeek={onPreviousWeek}
-            onNextWeek={onNextWeek}
-          />
-        </Box>
+        <WeekSelect
+          firstDate={firstWeekDate}
+          lastDate={lastWeekDate}
+          onPreviousWeek={onPreviousWeek}
+          onNextWeek={onNextWeek}
+        />
       )}
 
       <TableContainer>

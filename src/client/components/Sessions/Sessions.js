@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   Typography,
@@ -14,12 +14,6 @@ import { Link } from 'react-router-dom';
 
 import useInstructionSessions from '../../hooks/useInstructionSessions';
 
-import {
-  getCurrentMonday,
-  getPreviousMonday,
-  getNextMonday,
-} from '../../utils/date';
-
 import getCoursesFromInstructionSessions from '../../utils/getCoursesFromInstructionSessions';
 import filterInstructionSessionsByCourses from '../../utils/filterInstructionSessionsByCourses';
 import CourseChip from '../CourseChip';
@@ -27,16 +21,14 @@ import SessionCalendar from '../SessionCalendar';
 import PageProgress from '../PageProgress';
 import { getQueryOptions, useSelectedCourseCodes } from './utils';
 import useAuthorizedUser from '../../hooks/useAuthorizedUser';
+import useWeekCalendarControls from '../../hooks/useWeekCalendarControls';
 
 const Sessions = () => {
+  const { firstDate, ...calendarControls } = useWeekCalendarControls();
   const { authorizedUser } = useAuthorizedUser();
 
   const { selectedCourseCodes, toggleCourseCode, clearCourseCodes } =
     useSelectedCourseCodes();
-
-  const [firstDate, setFirstDate] = useState(() =>
-    getCurrentMonday(new Date()),
-  );
 
   const { instructionSessions, isLoading } = useInstructionSessions({
     ...getQueryOptions(firstDate),
@@ -105,9 +97,8 @@ const Sessions = () => {
 
           <SessionCalendar
             firstDate={firstDate}
+            {...calendarControls}
             instructionSessions={filteredSessions ?? []}
-            onPreviousWeek={() => setFirstDate(getPreviousMonday(firstDate))}
-            onNextWeek={() => setFirstDate(getNextMonday(firstDate))}
           />
         </CardContent>
       </Card>

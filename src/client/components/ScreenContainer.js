@@ -1,8 +1,9 @@
 import React from 'react';
-import { ThemeProvider, CssBaseline, Box } from '@mui/material';
+import { ThemeProvider, CssBaseline, Container } from '@mui/material';
 import { merge } from 'lodash';
 
 import theme from '../theme';
+import useScreenOptions from '../hooks/useScreenOptions';
 
 const overrides = {
   palette: {
@@ -15,12 +16,12 @@ const overrides = {
       styleOverrides: {
         dayCell: {
           [theme.breakpoints.up('xl')]: {
-            fontSize: '1.2rem',
+            fontSize: '1.1rem',
           },
         },
         hourCell: {
           [theme.breakpoints.up('xl')]: {
-            fontSize: '1.2rem',
+            fontSize: '1.1rem',
           },
         },
       },
@@ -30,11 +31,21 @@ const overrides = {
 
 const screenTheme = merge({}, theme, overrides);
 
-const ScreenContainer = ({ children, dense = false }) => (
-  <ThemeProvider theme={screenTheme}>
-    <CssBaseline />
-    <Box p={dense ? 0 : 2}>{children}</Box>
-  </ThemeProvider>
-);
+const ScreenContainer = ({ children }) => {
+  const { gutters } = useScreenOptions();
+
+  return (
+    <ThemeProvider theme={screenTheme}>
+      <CssBaseline />
+      <Container
+        maxWidth="xl"
+        sx={{ my: gutters ? 3 : 0 }}
+        disableGutters={!gutters}
+      >
+        {children}
+      </Container>
+    </ThemeProvider>
+  );
+};
 
 export default ScreenContainer;

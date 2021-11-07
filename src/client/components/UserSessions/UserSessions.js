@@ -9,12 +9,7 @@ import CalendarCell from './CalendarCell';
 import useMyInstructionSessions from '../../hooks/useMyInstructionSessions';
 import useInstructionLocations from '../../hooks/useInstructionLocations';
 import UpdateSessionDialog from './UpdateSessionDialog';
-
-import {
-  getPreviousMonday,
-  getNextMonday,
-  getCurrentMonday,
-} from '../../utils/date';
+import useWeekCalendarControls from '../../hooks/useWeekCalendarControls';
 
 import {
   getInitialValues,
@@ -23,9 +18,7 @@ import {
 } from './utils';
 
 const UserSessions = () => {
-  const [firstDate, setFirstDate] = useState(() =>
-    getCurrentMonday(new Date()),
-  );
+  const { firstDate, ...calendarControls } = useWeekCalendarControls();
 
   const { instructionSessions, refetch } = useMyInstructionSessions(
     getQueryOptions(firstDate),
@@ -79,10 +72,7 @@ const UserSessions = () => {
         <CardContent>
           <WeekCalendar
             firstDate={firstDate}
-            onNextWeek={() => setFirstDate((date) => getNextMonday(date))}
-            onPreviousWeek={() =>
-              setFirstDate((date) => getPreviousMonday(date))
-            }
+            {...calendarControls}
             renderCell={(date, hour) => (
               <CalendarCell
                 date={date}

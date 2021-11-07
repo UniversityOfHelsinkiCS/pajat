@@ -4,9 +4,11 @@ const usePageReloadTimeout = (time) => {
   const timeoutIdRef = useRef();
 
   useEffect(() => {
-    timeoutIdRef.current = setTimeout(() => {
-      window.location.reload();
-    }, time);
+    if (time) {
+      timeoutIdRef.current = setTimeout(() => {
+        window.location.reload();
+      }, time);
+    }
 
     return () => {
       if (timeoutIdRef.current) {

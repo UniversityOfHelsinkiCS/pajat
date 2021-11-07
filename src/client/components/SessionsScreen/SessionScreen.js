@@ -1,41 +1,29 @@
 import React from 'react';
 import { startOfWeek, endOfWeek } from 'date-fns';
-import { Typography, Box } from '@mui/material';
-import { useSearchParams } from 'react-router-dom';
+import { Box } from '@mui/material';
 
 import usePublicInstructionSessions from '../../hooks/usePublicInstructionSessions';
-import { getCurrentMonday } from '../../utils/date';
 import getCoursesFromInstructionSessions from '../../utils/getCoursesFromInstructionSessions';
 import filterInstructionSessionsByCourses from '../../utils/filterInstructionSessionsByCourses';
 import CourseChip from '../CourseChip';
 import SessionCalendar from '../SessionCalendar';
-import ScreenContainer from '../ScreenContainer';
-import usePageReloadTimeout from '../../hooks/usePageReloadTimeout';
+import useScreenOptions from '../../hooks/useScreenOptions';
+import useWeekCalendarControls from '../../hooks/useWeekCalendarControls';
+import ExternalLink from '../ExternalLink';
 
 const getQueryOptions = (date) => ({
   from: startOfWeek(date),
   to: endOfWeek(date),
 });
 
-const RELOAD_INTERVAL = 900000;
-
 const SessionScreen = () => {
-  usePageReloadTimeout(RELOAD_INTERVAL);
+  const { firstDate, ...calendarControls } = useWeekCalendarControls();
+  const { courseCodes, controls, linkUrl, showLink } = useScreenOptions();
 
-  const [searchParams] = useSearchParams();
-
-  const courseCodes = (searchParams.get('courseCodes') ?? '')
-    .split(',')
-    .filter(Boolean)
-    .map((code) => code.toUpperCase());
-
-  const dense = searchParams.get('dense') !== 'false';
-
-  const firstDate = getCurrentMonday(new Date());
-
-  const { instructionSessions } = usePublicInstructionSessions(
-    getQueryOptions(firstDate),
-  );
+  const { instructionSessions } = usePublicInstructionSessions({
+    ...getQueryOptions(firstDate),
+    keepPreviousData: true,
+  });
 
   const filteredInstructionSessions =
     courseCodes.length > 0
@@ -50,10 +38,12 @@ const SessionScreen = () => {
   );
 
   return (
-    <ScreenContainer dense={dense}>
-      <Typography component="h1" variant="h3" mb={2}>
-        BK107 Paja / Workshop
-      </Typography>
+    <>
+      {showLink && (
+        <Box mb={1}>
+          <ExternalLink href={linkUrl}>Open in new tab</ExternalLink>
+        </Box>
+      )}
 
       <Box mb={2}>
         {courses.map((course) => (
@@ -63,9 +53,10 @@ const SessionScreen = () => {
 
       <SessionCalendar
         firstDate={firstDate}
+        {...(controls && calendarControls)}
         instructionSessions={filteredInstructionSessions ?? []}
       />
-    </ScreenContainer>
+    </>
   );
 };
 
