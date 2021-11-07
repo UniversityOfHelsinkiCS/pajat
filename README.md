@@ -83,6 +83,7 @@ You can alter views by using query parameters. The available parameters are desc
 | Name  | Description | Default value | Example
 | --- | --- | --- | --- |
 | `controls` | Show week selection controls | `true` | [Example](https://study.cs.helsinki.fi/pajat2/public/screen?controls=false)
+| `showLogin` | Show login alert | `false` when within iframe, otherwise `true` | [Example](https://study.cs.helsinki.fi/pajat2/public/screen?showLogin=false)
 | `gutters`      | Add some space around the view | `false` when within iframe, otherwise `true` | [Example](https://study.cs.helsinki.fi/pajat2/public/screen?gutters=false)
 | `courseCodes`      | **Only available in the multiple courses view.**<br />List of shown courses' codes separated by comma. The list of avaible course can be found [here](https://study.cs.helsinki.fi/pajat2/courses) | No default value, all courses are shown | [Example](https://study.cs.helsinki.fi/pajat2/public/screen?courseCodes=tkt20002,tkt20006)
 

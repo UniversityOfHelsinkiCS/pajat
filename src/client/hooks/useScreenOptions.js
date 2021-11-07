@@ -20,6 +20,9 @@ const useScreenOptions = () => {
       : !inIframe,
     showLink: inIframe,
     linkUrl: window.location.href,
+    showLogin: searchParams.get('showLogin')
+      ? searchParams.get('showLogin') !== 'false'
+      : !inIframe,
   };
 };
 

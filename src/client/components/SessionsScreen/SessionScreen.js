@@ -9,7 +9,6 @@ import CourseChip from '../CourseChip';
 import SessionCalendar from '../SessionCalendar';
 import useScreenOptions from '../../hooks/useScreenOptions';
 import useWeekCalendarControls from '../../hooks/useWeekCalendarControls';
-import ExternalLink from '../ExternalLink';
 
 const getQueryOptions = (date) => ({
   from: startOfWeek(date),
@@ -18,7 +17,7 @@ const getQueryOptions = (date) => ({
 
 const SessionScreen = () => {
   const { firstDate, ...calendarControls } = useWeekCalendarControls();
-  const { courseCodes, controls, linkUrl, showLink } = useScreenOptions();
+  const { courseCodes, controls } = useScreenOptions();
 
   const { instructionSessions } = usePublicInstructionSessions({
     ...getQueryOptions(firstDate),
@@ -39,12 +38,6 @@ const SessionScreen = () => {
 
   return (
     <>
-      {showLink && (
-        <Box mb={1}>
-          <ExternalLink href={linkUrl}>Open in new tab</ExternalLink>
-        </Box>
-      )}
-
       <Box mb={2}>
         {courses.map((course) => (
           <CourseChip key={course.id} course={course} sx={{ mr: 1, mb: 1 }} />
