@@ -20,15 +20,12 @@ import useInstructors from '../hooks/useInstructors';
 import useAuthorizedUser from '../hooks/useAuthorizedUser';
 import useInstructorInvitationToken from '../hooks/useInstructorInvitationToken';
 import PageProgress from './PageProgress';
-import { BASE_PATH } from '../config';
+import getAbsoluteUrl from '../utils/getAbsoluteUrl';
 
 const copyToClipboard = (text) => navigator.clipboard.writeText(text);
 
-const getInvitationLink = (token) => {
-  const { origin } = new URL(window.location.href);
-
-  return `${origin}${BASE_PATH}/instructor-invitation/${token}`;
-};
+const getInvitationLink = (token) =>
+  getAbsoluteUrl(`/instructor-invitation/${token}`);
 
 const Instructors = () => {
   const { enqueueSnackbar } = useSnackbar();

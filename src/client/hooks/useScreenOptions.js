@@ -1,6 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 
 import isInIframe from '../utils/isInIframe';
+import getAbsoluteUrl from '../utils/getAbsoluteUrl';
 
 const useScreenOptions = () => {
   const [searchParams] = useSearchParams();
@@ -23,6 +24,7 @@ const useScreenOptions = () => {
     showLogin: searchParams.get('showLogin')
       ? searchParams.get('showLogin') !== 'false'
       : !inIframe,
+    loginUrl: getAbsoluteUrl('/'),
   };
 };
 

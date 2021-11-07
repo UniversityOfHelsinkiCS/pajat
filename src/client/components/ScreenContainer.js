@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 
 import { merge } from 'lodash';
-import { Link } from 'react-router-dom';
 
 import theme from '../theme';
 import useScreenOptions from '../hooks/useScreenOptions';
@@ -43,7 +42,8 @@ const overrides = {
 const screenTheme = merge({}, theme, overrides);
 
 const ScreenContainer = ({ children }) => {
-  const { gutters, showLink, linkUrl, showLogin } = useScreenOptions();
+  const { gutters, showLink, linkUrl, showLogin, loginUrl } =
+    useScreenOptions();
 
   return (
     <ThemeProvider theme={screenTheme}>
@@ -59,7 +59,12 @@ const ScreenContainer = ({ children }) => {
               severity="info"
               sx={{ mb: 2, display: 'inline-flex' }}
               action={
-                <Button color="inherit" size="small" component={Link} to="/">
+                <Button
+                  color="inherit"
+                  size="small"
+                  component="a"
+                  href={loginUrl}
+                >
                   Login
                 </Button>
               }
