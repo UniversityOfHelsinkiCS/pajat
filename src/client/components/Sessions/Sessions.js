@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Typography,
@@ -15,13 +15,20 @@ import { Link } from 'react-router-dom';
 import useInstructionSessions from '../../hooks/useInstructionSessions';
 
 import getCoursesFromInstructionSessions from '../../utils/getCoursesFromInstructionSessions';
-import filterInstructionSessionsByCourses from '../../utils/filterInstructionSessionsByCourses';
 import CourseChip from '../CourseChip';
 import SessionCalendar from '../SessionCalendar';
 import PageProgress from '../PageProgress';
-import { getQueryOptions, useSelectedCourseCodes } from './utils';
+
+import {
+  getQueryOptions,
+  useSelectedCourseCodes,
+  getFilteredInstructionSessions,
+  EXTRA_LOCATION_OPTIONS,
+} from './utils';
+
 import useAuthorizedUser from '../../hooks/useAuthorizedUser';
 import useWeekCalendarControls from '../../hooks/useWeekCalendarControls';
+import InstructionLocationSelect from '../InstructionLocationSelect';
 
 const Sessions = () => {
   const { firstDate, ...calendarControls } = useWeekCalendarControls();
@@ -29,6 +36,10 @@ const Sessions = () => {
 
   const { selectedCourseCodes, toggleCourseCode, clearCourseCodes } =
     useSelectedCourseCodes();
+
+  const [selectedLocation, setSelectedLocation] = useState(
+    EXTRA_LOCATION_OPTIONS[0].value,
+  );
 
   const { instructionSessions, isLoading } = useInstructionSessions({
     ...getQueryOptions(firstDate),
@@ -41,13 +52,11 @@ const Sessions = () => {
 
   const courses = getCoursesFromInstructionSessions(instructionSessions);
 
-  const filteredSessions =
-    selectedCourseCodes.length > 0
-      ? filterInstructionSessionsByCourses(
-          instructionSessions ?? [],
-          (course) => selectedCourseCodes.includes(course.code),
-        )
-      : instructionSessions;
+  const filteredSessions = getFilteredInstructionSessions(
+    instructionSessions,
+    selectedCourseCodes,
+    selectedLocation,
+  );
 
   return (
     <>
@@ -67,32 +76,55 @@ const Sessions = () => {
 
       <Card>
         <CardContent>
-          <Box mb={2}>
-            {courses.map((course) => (
-              <CourseChip
-                key={course.id}
-                course={course}
-                sx={{
-                  mr: 1,
-                  mb: 1,
-                  opacity:
-                    selectedCourseCodes.length === 0 ||
-                    selectedCourseCodes.includes(course.code)
-                      ? 1
-                      : 0.5,
-                }}
-                onClick={() => toggleCourseCode(course.code)}
+          <Box
+            sx={{
+              mb: 2,
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+            }}
+          >
+            <Box flexGrow={1}>
+              {courses.map((course) => (
+                <CourseChip
+                  key={course.id}
+                  course={course}
+                  sx={{
+                    mr: 1,
+                    mb: 1,
+                    opacity:
+                      selectedCourseCodes.length === 0 ||
+                      selectedCourseCodes.includes(course.code)
+                        ? 1
+                        : 0.5,
+                  }}
+                  onClick={() => toggleCourseCode(course.code)}
+                />
+              ))}
+              {selectedCourseCodes.length > 0 && (
+                <Chip
+                  icon={<ClearIcon />}
+                  label="Clear course filters"
+                  variant="outlined"
+                  sx={{ mr: 1, mb: 1 }}
+                  onClick={() => clearCourseCodes()}
+                />
+              )}
+            </Box>
+            <Box
+              sx={{
+                ml: { xs: 0, md: 2 },
+                mt: { xs: 2, md: 0 },
+                flexGrow: { xs: 1, md: 0 },
+              }}
+            >
+              <InstructionLocationSelect
+                value={selectedLocation}
+                onChange={(event) => setSelectedLocation(event.target.value)}
+                extraOptions={EXTRA_LOCATION_OPTIONS}
+                sx={{ minWidth: '200px' }}
+                fullWidth
               />
-            ))}
-            {selectedCourseCodes.length > 0 && (
-              <Chip
-                icon={<ClearIcon />}
-                label="Clear filters"
-                variant="outlined"
-                sx={{ mr: 1, mb: 1 }}
-                onClick={() => clearCourseCodes()}
-              />
-            )}
+            </Box>
           </Box>
 
           <SessionCalendar
