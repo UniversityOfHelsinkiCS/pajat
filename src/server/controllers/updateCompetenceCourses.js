@@ -1,20 +1,28 @@
 const { User } = require('../models');
-const { ForbiddenError } = require('../utils/errors');
+const { ForbiddenError, NotFoundError } = require('../utils/errors');
 
 const updateCompetenceCourses = async (req, res) => {
-  const { user, body: courseIds } = req;
+  const {
+    user,
+    body: courseIds,
+    params: { id },
+  } = req;
 
-  if (!user.hasInstructorAccess()) {
-    throw new ForbiddenError('Instructor access is required');
+  if (user.id !== id && !user.hasAdminAccess()) {
+    throw new ForbiddenError();
   }
 
-  await user.updateCompetenceCourses(courseIds);
+  const targetUser = await User.query().findById(id);
 
-  const updatedUser = await User.query()
-    .findById(user.id)
-    .withGraphFetched('competenceCourses');
+  if (!targetUser) {
+    throw new NotFoundError('User is not found');
+  }
 
-  res.send(updatedUser);
+  await targetUser.updateCompetenceCourses(courseIds);
+
+  await targetUser.$fetchGraph('competenceCourses');
+
+  res.send(targetUser);
 };
 
 module.exports = updateCompetenceCourses;

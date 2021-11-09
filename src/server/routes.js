@@ -25,11 +25,19 @@ router.get('/logout', controllers.logout);
 
 router.get('/users/me', controllers.getAuthorizedUser);
 
-router.put('/users/me/competence-courses', controllers.updateCompetenceCourses);
+router.put(
+  '/users/me/competence-courses',
+  controllers.updateMyCompetenceCourses,
+);
 
 router.get(
   '/users/me/instruction-sessions',
   controllers.getMyInstructionSessions,
+);
+
+router.put(
+  '/users/:id/competence-courses',
+  controllers.updateCompetenceCourses,
 );
 
 router.get('/users/instructors', controllers.getInstructors);

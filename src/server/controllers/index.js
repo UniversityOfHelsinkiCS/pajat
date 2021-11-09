@@ -2,7 +2,7 @@ const getAuthorizedUser = require('./getAuthorizedUser');
 const logout = require('./logout');
 const getCourses = require('./getCourses');
 const createCourse = require('./createCourse');
-const updateCompetenceCourses = require('./updateCompetenceCourses');
+const updateMyCompetenceCourses = require('./updateMyCompetenceCourses');
 const createInsturctionSession = require('./createInstructionSession');
 const getMyInstructionSessions = require('./getMyInstructionSessions');
 const deleteInstructionSession = require('./deleteInstructionSession');
@@ -15,13 +15,14 @@ const getCourse = require('./getCourse');
 const getInstructionLocations = require('./getInstructionLocations');
 const updateInstructionSession = require('./updateInstructionSession');
 const getInstructionSession = require('./getInstructionSession');
+const updateCompetenceCourses = require('./updateCompetenceCourses');
 
 module.exports = {
   getAuthorizedUser,
   logout,
   getCourses,
   createCourse,
-  updateCompetenceCourses,
+  updateMyCompetenceCourses,
   createInsturctionSession,
   getMyInstructionSessions,
   deleteInstructionSession,
@@ -34,4 +35,5 @@ module.exports = {
   getInstructionLocations,
   updateInstructionSession,
   getInstructionSession,
+  updateCompetenceCourses,
 };

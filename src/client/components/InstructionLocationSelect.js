@@ -43,7 +43,9 @@ const InstructionLocationSelect = ({
         {...props}
       >
         {extraOptions.map(({ value, label: optionLabel }) => (
-          <MenuItem value={value}>{optionLabel}</MenuItem>
+          <MenuItem key={value} value={value}>
+            {optionLabel}
+          </MenuItem>
         ))}
 
         {(instructionLocations ?? []).map((location) => (

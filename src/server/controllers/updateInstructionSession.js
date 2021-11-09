@@ -25,7 +25,7 @@ const updateInstructionSession = async (req, res) => {
   }
 
   if (session.userId !== user.id) {
-    throw new ForbiddenError('Forbidden');
+    throw new ForbiddenError();
   }
 
   await session.$query().patch({ description, instructionLocationId });

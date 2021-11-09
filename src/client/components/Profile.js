@@ -14,12 +14,12 @@ import { useSnackbar } from 'notistack';
 
 import useAuthorizedUser from '../hooks/useAuthorizedUser';
 import useCourses from '../hooks/useCourses';
-import useUpdateCompetenceCourses from '../hooks/useUpdateCompetenceCourses';
+import useUpdateMyCompetenceCourses from '../hooks/useUpdateMyCompetenceCourses';
 import PageProgress from './PageProgress';
 
 const SwitchList = ({ courses, competenceCourses }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const { mutateAsync, isLoading } = useUpdateCompetenceCourses();
+  const { mutateAsync, isLoading } = useUpdateMyCompetenceCourses();
 
   const [competenceCourseIds, setCompetenceCourseIds] = useState(() =>
     competenceCourses.map(({ id }) => id),
@@ -63,11 +63,15 @@ const SwitchList = ({ courses, competenceCourses }) => {
 };
 
 const Profile = () => {
-  const { courses } = useCourses({ suspense: true });
+  const { courses, isLoading: coursesIsLoading } = useCourses();
 
-  const { authorizedUser, isLoading } = useAuthorizedUser({
-    skipCache: true,
-  });
+  const { authorizedUser, isLoading: authorizedUserIsLoading } =
+    useAuthorizedUser({
+      queryKeySuffix: 'profile',
+      cacheTime: 0,
+    });
+
+  const isLoading = coursesIsLoading || authorizedUserIsLoading;
 
   if (isLoading) {
     return <PageProgress />;

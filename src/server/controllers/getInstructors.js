@@ -10,6 +10,7 @@ const getInstructors = async (req, res) => {
 
   const instructors = await User.query()
     .where({ instructor: true })
+    .withGraphFetched('competenceCourses')
     .orderBy('createdAt', 'desc');
 
   res.send(instructors);

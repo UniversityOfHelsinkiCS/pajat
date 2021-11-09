@@ -1,20 +1,18 @@
 import { useQuery as useBaseQuery } from 'react-query';
 
-import useId from './useId';
-
 const normalizeQueryKey = (key) => (Array.isArray(key) ? key : [key]);
 
 const useQuery = (queryKey, queryFn, options = {}) => {
-  const { skipCache = false, ...restOptions } = options;
-  const id = useId();
+  const { queryKeySuffix, ...restOptions } = options;
 
   const normalizedQueryKey = normalizeQueryKey(queryKey);
-  const key = skipCache ? [...normalizedQueryKey, id] : normalizedQueryKey;
+  const normalizedQueryKeySuffix = normalizeQueryKey(queryKeySuffix);
 
-  return useBaseQuery(key, queryFn, {
-    ...restOptions,
-    ...(skipCache && { cacheTime: 0 }),
-  });
+  const key = queryKeySuffix
+    ? [...normalizedQueryKey, ...normalizedQueryKeySuffix]
+    : normalizedQueryKey;
+
+  return useBaseQuery(key, queryFn, restOptions);
 };
 
 export default useQuery;

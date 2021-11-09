@@ -88,7 +88,8 @@ const UpdateSessionDialog = ({ onRefetch }) => {
   const instructionSessionId = searchParams.get('instructionSessionId');
 
   const { instructionSession } = useInstructionSession(instructionSessionId, {
-    skipCache: true,
+    queryKeySuffix: 'updateInstructionSession',
+    cacheTime: 0,
   });
 
   const open = Boolean(instructionSessionId);

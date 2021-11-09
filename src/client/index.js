@@ -7,6 +7,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 import queryClient from './utils/queryClient';
 import App from './components/App';
@@ -19,6 +20,7 @@ render(
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <SnackbarProvider maxSnack={3} preventDuplicate>
           <ThemeProvider theme={theme}>
+            <ReactQueryDevtools />
             <CssBaseline />
             <App />
           </ThemeProvider>
