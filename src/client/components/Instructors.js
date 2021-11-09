@@ -19,7 +19,6 @@ import { useSnackbar } from 'notistack';
 import useInstructors from '../hooks/useInstructors';
 import useAuthorizedUser from '../hooks/useAuthorizedUser';
 import useInstructorInvitationToken from '../hooks/useInstructorInvitationToken';
-import PageProgress from './PageProgress';
 import getAbsoluteUrl from '../utils/getAbsoluteUrl';
 
 const copyToClipboard = (text) => navigator.clipboard.writeText(text);
@@ -30,12 +29,8 @@ const getInvitationLink = (token) =>
 const Instructors = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { authorizedUser } = useAuthorizedUser();
-  const { instructors, isLoading } = useInstructors();
+  const { instructors } = useInstructors({ suspense: true });
   const { token } = useInstructorInvitationToken();
-
-  if (isLoading) {
-    return <PageProgress />;
-  }
 
   if (!instructors) {
     return <Navigate to="/" replace />;
@@ -68,14 +63,12 @@ const Instructors = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Username</TableCell>
               <TableCell>Full name</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {instructors.map(({ id, username, fullName }) => (
+            {instructors.map(({ id, fullName }) => (
               <TableRow key={id}>
-                <TableCell>{username}</TableCell>
                 <TableCell>{fullName}</TableCell>
               </TableRow>
             ))}

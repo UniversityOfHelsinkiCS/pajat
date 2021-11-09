@@ -1,9 +1,10 @@
-const { Model } = require('objection');
+const { Model, transaction } = require('objection');
 
 const knex = require('../utils/knex');
 const BaseModel = require('./BaseModel');
 const { ADMIN_USERS } = require('../config');
 const Course = require('./Course');
+const UserCourseCompetence = require('./UserCourseCompetence');
 
 class User extends BaseModel {
   static get tableName() {
@@ -57,6 +58,24 @@ class User extends BaseModel {
 
   hasInstructorAccess() {
     return this.hasAdminAccess() || this.instructor;
+  }
+
+  async updateCompetenceCourses(courseIds) {
+    const payload = courseIds.map((courseId) => ({
+      courseId,
+      userId: this.id,
+    }));
+
+    await transaction(
+      UserCourseCompetence,
+      async (BoundUserCourseCompetence) => {
+        await BoundUserCourseCompetence.query()
+          .where({ userId: this.id })
+          .delete();
+
+        await BoundUserCourseCompetence.query().insert(payload);
+      },
+    );
   }
 }
 

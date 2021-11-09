@@ -17,15 +17,10 @@ import { Navigate, Link } from 'react-router-dom';
 
 import useCourses from '../hooks/useCourses';
 import useAuthorizedUser from '../hooks/useAuthorizedUser';
-import PageProgress from './PageProgress';
 
 const Courses = () => {
   const { authorizedUser } = useAuthorizedUser();
-  const { courses, isLoading } = useCourses();
-
-  if (isLoading) {
-    return <PageProgress />;
-  }
+  const { courses } = useCourses({ suspense: true });
 
   if (!courses) {
     return <Navigate to="/" replace />;

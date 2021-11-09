@@ -1,6 +1,4 @@
-const { transaction } = require('objection');
-
-const { UserCourseCompetence, User } = require('../models');
+const { User } = require('../models');
 const { ForbiddenError } = require('../utils/errors');
 
 const updateCompetenceCourses = async (req, res) => {
@@ -10,13 +8,7 @@ const updateCompetenceCourses = async (req, res) => {
     throw new ForbiddenError('Instructor access is required');
   }
 
-  const payload = courseIds.map((courseId) => ({ courseId, userId: user.id }));
-
-  await transaction(UserCourseCompetence, async (BoundUserCourseCompetence) => {
-    await BoundUserCourseCompetence.query().where({ userId: user.id }).delete();
-
-    await BoundUserCourseCompetence.query().insert(payload);
-  });
+  await user.updateCompetenceCourses(courseIds);
 
   const updatedUser = await User.query()
     .findById(user.id)

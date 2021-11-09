@@ -63,14 +63,11 @@ const SwitchList = ({ courses, competenceCourses }) => {
 };
 
 const Profile = () => {
-  const { authorizedUser, isLoading: authorizedUserIsLoading } =
-    useAuthorizedUser({
-      skipCache: true,
-    });
+  const { courses } = useCourses({ suspense: true });
 
-  const { courses, isLoading: coursesIsLoading } = useCourses();
-
-  const isLoading = authorizedUserIsLoading || coursesIsLoading;
+  const { authorizedUser, isLoading } = useAuthorizedUser({
+    skipCache: true,
+  });
 
   if (isLoading) {
     return <PageProgress />;

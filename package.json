@@ -33,6 +33,7 @@
     "@mui/icons-material": "^5.0.5",
     "@mui/lab": "^5.0.0-alpha.53",
     "@mui/material": "^5.0.6",
+    "@mui/x-data-grid": "^4.0.2",
     "axios": "^0.24.0",
     "date-fns": "^2.25.0",
     "dotenv": "^10.0.0",
