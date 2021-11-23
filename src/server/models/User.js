@@ -1,4 +1,5 @@
 const { Model, transaction } = require('objection');
+const _ = require('lodash');
 
 const knex = require('../utils/knex');
 const BaseModel = require('./BaseModel');
@@ -58,6 +59,19 @@ class User extends BaseModel {
 
   hasInstructorAccess() {
     return this.hasAdminAccess() || this.instructor;
+  }
+
+  toPublicObject() {
+    const publicUser = _.pick(this, [
+      'id',
+      'firstName',
+      'lastName',
+      'fullName',
+      'displayName',
+      'competenceCourses',
+    ]);
+
+    return publicUser;
   }
 
   async updateCompetenceCourses(courseIds) {

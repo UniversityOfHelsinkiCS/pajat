@@ -1,4 +1,5 @@
 const { Model } = require('objection');
+const _ = require('lodash');
 
 const knex = require('../utils/knex');
 const BaseModel = require('./BaseModel');
@@ -48,6 +49,26 @@ class InstructionSession extends BaseModel {
       startTime: getTimeStringFromHour(startHour),
       endTime: getTimeStringFromHour(endHour),
     });
+  }
+
+  toPublicObject() {
+    const publicSession = _.pick(this, [
+      'id',
+      'sessionDate',
+      'startTime',
+      'endTime',
+      'instructionLocation',
+      'description',
+      'instructionLocationId',
+      'userId',
+      'createdAt',
+      'updatedAt',
+    ]);
+
+    return {
+      ...publicSession,
+      ...(this.user && { user: this.user.toPublicObject() }),
+    };
   }
 }
 

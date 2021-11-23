@@ -12,7 +12,7 @@ const getInstructionSession = async (req, res) => {
     throw new NotFoundError('Instruction session is not found');
   }
 
-  res.send(session);
+  res.send(session.toPublicObject());
 };
 
 module.exports = getInstructionSession;

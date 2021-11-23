@@ -19,7 +19,11 @@ const getInstructionSessions = async (req, res) => {
     .andWhere('sessionDate', '<=', to)
     .withGraphFetched('[user.competenceCourses,instructionLocation]');
 
-  res.send(instructionSessions);
+  const publicInstructionSessions = instructionSessions.map((session) =>
+    session.toPublicObject(),
+  );
+
+  res.send(publicInstructionSessions);
 };
 
 module.exports = getInstructionSessions;
