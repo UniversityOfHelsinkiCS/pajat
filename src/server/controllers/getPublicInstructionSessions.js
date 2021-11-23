@@ -18,7 +18,10 @@ const parseCourseCodes = (courseCodesString) => {
     return [];
   }
 
-  return courseCodesString.split(',').filter(Boolean);
+  return courseCodesString
+    .split(',')
+    .filter(Boolean)
+    .map((code) => code.toUpperCase());
 };
 
 const getPublicInstructionSessions = async (req, res) => {
