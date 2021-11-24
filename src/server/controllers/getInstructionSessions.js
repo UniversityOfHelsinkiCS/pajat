@@ -17,6 +17,7 @@ const getInstructionSessions = async (req, res) => {
   const instructionSessions = await InstructionSession.query()
     .andWhere('sessionDate', '>=', from)
     .andWhere('sessionDate', '<=', to)
+    .orderBy('sessionDate')
     .withGraphFetched('[user.competenceCourses,instructionLocation]');
 
   const publicInstructionSessions = instructionSessions.map((session) =>

@@ -40,6 +40,7 @@ const getPublicInstructionSessions = async (req, res) => {
   let query = InstructionSession.query()
     .andWhere('sessionDate', '>=', from)
     .andWhere('sessionDate', '<=', to)
+    .orderBy('sessionDate')
     .withGraphFetched('[user.competenceCourses,instructionLocation]');
 
   if (courseCodes.length > 0) {
