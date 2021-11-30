@@ -1,4 +1,4 @@
-import { uniqBy } from 'lodash';
+import { uniqBy, orderBy } from 'lodash';
 
 const getCoursesFromInstructionSessions = (sessions) => {
   const courses = uniqBy(
@@ -6,7 +6,7 @@ const getCoursesFromInstructionSessions = (sessions) => {
     ({ id }) => id,
   );
 
-  return courses;
+  return orderBy(courses, ['code']);
 };
 
 export default getCoursesFromInstructionSessions;
