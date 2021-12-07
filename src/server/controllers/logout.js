@@ -4,7 +4,7 @@ const logout = async (req, res) => {
   } = req;
 
   res.send({
-    url: shibLogoutUrl,
+    url: shibLogoutUrl ?? null,
   });
 };
 
