@@ -41,7 +41,7 @@ const Drawer = ({ authorizedUser, open, onClose }) => {
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e);
-      enqueueSnackbar('Logout failed', { variant: 'error' });
+      enqueueSnackbar('Logging out failed', { variant: 'error' });
     }
   };
 
@@ -62,7 +62,7 @@ const Drawer = ({ authorizedUser, open, onClose }) => {
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
-            <ListItemText primary="Logout" />
+            <ListItemText primary="Log out" />
           </ListItemButton>
         </ListItem>
       </LinkList>
