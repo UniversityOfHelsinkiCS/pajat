@@ -3,6 +3,7 @@ import React from 'react';
 import {
   Drawer as MuiDrawer,
   List,
+  ListItem,
   ListItemButton,
   ListItemText,
   ListItemIcon,
@@ -48,17 +49,22 @@ const Drawer = ({ authorizedUser, open, onClose }) => {
     <MuiDrawer anchor="right" open={open} onClose={onClose}>
       <LinkList>
         {links.map(({ label, to }) => (
-          <ListItemButton key={to} onClick={onClose} component={Link} to={to}>
-            <ListItemText primary={label} />
-          </ListItemButton>
+          <ListItem key={to} disablePadding>
+            <ListItemButton key={to} onClick={onClose} component={Link} to={to}>
+              <ListItemText primary={label} />
+            </ListItemButton>
+          </ListItem>
         ))}
-        <Divider sx={{ my: 1 }} />
-        <ListItemButton onClick={handleLogout}>
-          <ListItemIcon>
-            <LogoutIcon />
-          </ListItemIcon>
-          <ListItemText primary="Logout" />
-        </ListItemButton>
+        <Divider component="li" sx={{ my: 1 }} />
+
+        <ListItem disablePadding>
+          <ListItemButton onClick={handleLogout}>
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItemButton>
+        </ListItem>
       </LinkList>
     </MuiDrawer>
   );
