@@ -3,7 +3,7 @@ const express = require('express');
 const accessLogger = require('./middlewares/accessLogger');
 const shibbolethCharsetMiddleware = require('./middlewares/shibbolethCharsetParser');
 const errorHandler = require('./middlewares/errorHandler');
-const getAuthorizedUser = require('./middlewares/getAuthorizedUser');
+const authenticationHandler = require('./middlewares/authenticationHandler');
 const controllers = require('./controllers');
 
 const router = express.Router();
@@ -18,12 +18,12 @@ router.get(
 router.get('/public/courses/:code', controllers.getCourse);
 
 router.use(shibbolethCharsetMiddleware);
-router.use(getAuthorizedUser);
+router.use(authenticationHandler);
 router.use(accessLogger);
 
 router.get('/logout', controllers.logout);
 
-router.get('/users/me', controllers.getAuthorizedUser);
+router.get('/users/me', controllers.getAuthenticatedUser);
 
 router.put(
   '/users/me/competence-courses',

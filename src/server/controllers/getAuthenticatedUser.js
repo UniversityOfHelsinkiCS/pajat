@@ -1,6 +1,6 @@
 const { User } = require('../models');
 
-const getAuthorizedUser = async (req, res) => {
+const getAuthenticatedUser = async (req, res) => {
   const { user } = req;
 
   const userWithGraph = await User.query()
@@ -14,4 +14,4 @@ const getAuthorizedUser = async (req, res) => {
   });
 };
 
-module.exports = getAuthorizedUser;
+module.exports = getAuthenticatedUser;

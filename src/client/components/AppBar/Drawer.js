@@ -21,18 +21,18 @@ const LinkList = styled(List)`
   min-width: 250px;
 `;
 
-const Drawer = ({ authorizedUser, open, onClose }) => {
+const Drawer = ({ user, open, onClose }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const links = [
     { label: 'Sessions', to: '/' },
     { label: 'Courses', to: '/courses' },
-    authorizedUser.adminAccess && { label: 'Instructors', to: '/instructors' },
-    authorizedUser.instructorAccess && {
+    user.adminAccess && { label: 'Instructors', to: '/instructors' },
+    user.instructorAccess && {
       label: 'My sessions',
       to: '/my-sessions',
     },
-    authorizedUser.instructorAccess && { label: 'My profile', to: '/profile' },
+    user.instructorAccess && { label: 'My profile', to: '/profile' },
   ].filter(Boolean);
 
   const handleLogout = async () => {

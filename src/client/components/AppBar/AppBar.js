@@ -4,13 +4,13 @@ import { AppBar as MuiAppBar, Box, Toolbar, Button } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
 
-import useAuthorizedUser from '../../hooks/useAuthorizedUser';
+import useCurrentUser from '../../hooks/useCurrentUser';
 import Drawer from './Drawer';
 import Logo from './Logo';
 import loginAsService from '../../utils/loginAsService';
 
 const AppBar = () => {
-  const { authorizedUser } = useAuthorizedUser();
+  const { currentUser } = useCurrentUser();
   const isLoginAs = Boolean(loginAsService.getUsername());
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -22,21 +22,21 @@ const AppBar = () => {
           <Box flexGrow={1}>
             <Logo />
           </Box>
-          {authorizedUser && (
+          {currentUser && (
             <Button
               color="inherit"
               startIcon={<MenuIcon />}
               onClick={() => setDrawerOpen(true)}
             >
-              {authorizedUser.displayName}
+              {currentUser.displayName}
               {isLoginAs && <> (login as)</>}
             </Button>
           )}
         </Toolbar>
       </MuiAppBar>
-      {authorizedUser && (
+      {currentUser && (
         <Drawer
-          authorizedUser={authorizedUser}
+          user={currentUser}
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
         />

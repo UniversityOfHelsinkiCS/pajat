@@ -1,10 +1,10 @@
 import useQuery from './useQuery';
 import apiClient from '../utils/apiClient';
 
-const useAuthorizedUser = (options = {}) => {
-  const queryKey = 'authorizedUser';
+const useCurrentUser = (options = {}) => {
+  const queryKey = 'currentUser';
 
-  const { data: authorizedUser, ...rest } = useQuery(
+  const { data: currentUser, ...rest } = useQuery(
     queryKey,
     async () => {
       const { data } = await apiClient.get('/users/me');
@@ -14,7 +14,7 @@ const useAuthorizedUser = (options = {}) => {
     options,
   );
 
-  return { authorizedUser, ...rest };
+  return { currentUser, ...rest };
 };
 
-export default useAuthorizedUser;
+export default useCurrentUser;

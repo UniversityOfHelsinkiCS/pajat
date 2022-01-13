@@ -1,4 +1,4 @@
-const getAuthorizedUser = require('./getAuthorizedUser');
+const getAuthenticatedUser = require('./getAuthenticatedUser');
 const logout = require('./logout');
 const getCourses = require('./getCourses');
 const createCourse = require('./createCourse');
@@ -18,7 +18,7 @@ const getInstructionSession = require('./getInstructionSession');
 const updateCompetenceCourses = require('./updateCompetenceCourses');
 
 module.exports = {
-  getAuthorizedUser,
+  getAuthenticatedUser,
   logout,
   getCourses,
   createCourse,

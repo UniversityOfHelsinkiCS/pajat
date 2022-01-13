@@ -40,7 +40,7 @@ const getLoginAsUser = async (req) => {
   return user;
 };
 
-const getAuthorizedUser = async (req, res, next) => {
+const authenticationHandler = async (req, res, next) => {
   const userPayload = getUserPayloadFromShibboHeaders(req);
   const { username } = userPayload;
 
@@ -62,4 +62,4 @@ const getAuthorizedUser = async (req, res, next) => {
   next();
 };
 
-module.exports = getAuthorizedUser;
+module.exports = authenticationHandler;

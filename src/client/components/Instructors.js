@@ -24,7 +24,7 @@ import { useSnackbar } from 'notistack';
 import SearchIcon from '@mui/icons-material/Search';
 
 import useInstructors from '../hooks/useInstructors';
-import useAuthorizedUser from '../hooks/useAuthorizedUser';
+import useCurrentUser from '../hooks/useCurrentUser';
 import useInstructorInvitationToken from '../hooks/useInstructorInvitationToken';
 import getAbsoluteUrl from '../utils/getAbsoluteUrl';
 import useCourses from '../hooks/useCourses';
@@ -121,7 +121,7 @@ const CourseNameTableCell = ({ course, ...props }) => (
 
 const Instructors = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const { authorizedUser } = useAuthorizedUser();
+  const { currentUser } = useCurrentUser();
 
   const { instructors, isLoading: instructorsIsLoading } = useInstructors({
     queryKeySuffix: 'instructorTable',
@@ -169,7 +169,7 @@ const Instructors = () => {
         <Typography component="h1" variant="h4" flexGrow={1}>
           Instructors
         </Typography>
-        {authorizedUser?.adminAccess && token && (
+        {currentUser?.adminAccess && token && (
           <Button variant="contained" onClick={handleCopyLink}>
             Copy invitation link
           </Button>

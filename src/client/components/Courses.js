@@ -16,11 +16,11 @@ import {
 import { Navigate, Link } from 'react-router-dom';
 
 import useCourses from '../hooks/useCourses';
-import useAuthorizedUser from '../hooks/useAuthorizedUser';
+import useCurrentUser from '../hooks/useCurrentUser';
 import PageProgress from './PageProgress';
 
 const Courses = () => {
-  const { authorizedUser } = useAuthorizedUser();
+  const { currentUser } = useCurrentUser();
   const { courses, isLoading } = useCourses();
 
   if (isLoading) {
@@ -37,7 +37,7 @@ const Courses = () => {
         <Typography component="h1" variant="h4" flexGrow={1}>
           Courses
         </Typography>
-        {authorizedUser?.adminAccess && (
+        {currentUser?.adminAccess && (
           <Button variant="contained" component={Link} to="/courses/new">
             Add course
           </Button>

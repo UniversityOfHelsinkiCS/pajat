@@ -26,13 +26,13 @@ import {
   EXTRA_LOCATION_OPTIONS,
 } from './utils';
 
-import useAuthorizedUser from '../../hooks/useAuthorizedUser';
+import useCurrentUser from '../../hooks/useCurrentUser';
 import useWeekCalendarControls from '../../hooks/useWeekCalendarControls';
 import InstructionLocationSelect from '../InstructionLocationSelect';
 
 const Sessions = () => {
   const { firstDate, ...calendarControls } = useWeekCalendarControls();
-  const { authorizedUser } = useAuthorizedUser();
+  const { currentUser } = useCurrentUser();
 
   const { selectedCourseCodes, toggleCourseCode, clearCourseCodes } =
     useSelectedCourseCodes();
@@ -65,7 +65,7 @@ const Sessions = () => {
           Sessions
         </Typography>
 
-        {authorizedUser?.instructorAccess && (
+        {currentUser?.instructorAccess && (
           <div>
             <Button variant="contained" component={Link} to="/my-sessions">
               Add session

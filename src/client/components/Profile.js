@@ -12,7 +12,7 @@ import {
 import { Navigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
-import useAuthorizedUser from '../hooks/useAuthorizedUser';
+import useCurrentUser from '../hooks/useCurrentUser';
 import useCourses from '../hooks/useCourses';
 import useUpdateMyCompetenceCourses from '../hooks/useUpdateMyCompetenceCourses';
 import PageProgress from './PageProgress';
@@ -65,23 +65,22 @@ const SwitchList = ({ courses, competenceCourses }) => {
 const Profile = () => {
   const { courses, isLoading: coursesIsLoading } = useCourses();
 
-  const { authorizedUser, isLoading: authorizedUserIsLoading } =
-    useAuthorizedUser({
-      queryKeySuffix: 'profile',
-      cacheTime: 0,
-    });
+  const { currentUser, isLoading: currentUserIsLoading } = useCurrentUser({
+    queryKeySuffix: 'profile',
+    cacheTime: 0,
+  });
 
-  const isLoading = coursesIsLoading || authorizedUserIsLoading;
+  const isLoading = coursesIsLoading || currentUserIsLoading;
 
   if (isLoading) {
     return <PageProgress />;
   }
 
-  if (!authorizedUser || !courses) {
+  if (!currentUser || !courses) {
     return <Navigate to="/" replace />;
   }
 
-  const { competenceCourses } = authorizedUser;
+  const { competenceCourses } = currentUser;
 
   return (
     <>
